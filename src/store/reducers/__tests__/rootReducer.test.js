@@ -7,7 +7,7 @@ import { SET_USER, MESSAGES_SET } from '../../actions/actionTypes';
 describe('Redux: Root Reducer', () => {
   it('should return initial state that matchs what child reducers return given an empty action', () => {
     const store = createStore(rootReducer);
-    expect(store.getState().user).toEqual(userReducer(undefined, {}));
+    expect(store.getState().user.user).toEqual(userReducer(undefined, {}));
     expect(store.getState().messages).toEqual(messagesReducer(undefined, {}));
   });
 
@@ -24,7 +24,7 @@ describe('Redux: Root Reducer', () => {
     };
     store.dispatch(userAction);
     store.dispatch(messageAction);
-    expect(store.getState().user).toEqual(userReducer(undefined, userAction));
+    expect(store.getState().user.user).toEqual(userReducer(undefined, userAction));
     expect(store.getState().messages).toEqual(messagesReducer(undefined, messageAction));
   });
 });

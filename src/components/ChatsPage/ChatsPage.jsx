@@ -50,7 +50,7 @@ export class ChatsPage extends PureComponent {
         return {
           _id: room._id,
           userName: chatName,
-          content: (messages.items[0] && messages.items[0].message) || 'No messages',
+          content: (messages.items[messages.items.length - 1] && messages.items[messages.items.length - 1].message) || 'No messages',
         };
       }),
     );
