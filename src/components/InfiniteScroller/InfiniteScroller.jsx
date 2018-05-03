@@ -27,7 +27,7 @@ export class InfiniteScroller extends Component {
     if (this.container) {
       const scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
       const windowHeight = window.innerHeight;
-      const maxScroll = this.container.clientHeight - windowHeight;
+      const maxScroll = this.container.clientHeight - 500;
       if (!this.state.isLoading) {
         if (scrollTop + windowHeight >= maxScroll) {
           this.loadMore();

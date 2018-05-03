@@ -7,6 +7,7 @@ import { FETCH_ROOMS_ERROR } from '../../errorCodes';
 import api from '../../api';
 import { connect } from 'react-redux';
 import { setRooms, setChatNext } from '../../store/actions/chatActions';
+import { fetchMessages } from '../../store/actions/messagesActions';
 
 
 
@@ -46,9 +47,16 @@ class ChatsPageComponent extends Component {
     const res = await api.getCurrentUserRooms(next);
     const rooms = await Promise.all(
       res.items.map(async room => {
-        const roomMessages = await api.getRoomMessages(room._id);
-        const messages = roomMessages.items;
+        await this.props.dispatch(fetchMessages(room._id));
+        
+        while(this.props.messages[room._id].next) {
+          await this.props.dispatch(fetchMessages(room._id));
+        }
 
+        const roomMessages = this.props.messages[room._id].messages;
+        const last = roomMessages.length - 1;
+        const lastMessage = roomMessages[last].text;
+        
         let recepient = await api.getUser(
           room.users.find(
             roomUserID => roomUserID !== user._id
@@ -56,7 +64,6 @@ class ChatsPageComponent extends Component {
         );
 
         const chatName = room.users.length > 2 ? room.name : recepient.name;
-        const lastMessage = messages[messages.length - 1] && messages[messages.length - 1].message;
         return {
           _id: room._id,
           userName: chatName,
@@ -87,6 +94,7 @@ class ChatsPageComponent extends Component {
 
 const stateToProps = state => ({
   rooms: state.chat.rooms,
+  messages: state.messages,
   next: state.chat.next,
   error: state.chat.error,
   users: state.user.users,

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Contact } from '../Contact/Contact';
-import { SectionTitle } from '../SectionTitle/SectionTitle';
 import api from '../../api';
 
 import './Contacts.css';
@@ -50,7 +49,6 @@ class ContactsComponent extends Component {
   render() {
     return (
       <React.Fragment>
-        <SectionTitle title="Contacts" />
         <div className="contacts">
           {this.props.contacts.map((contact, index) => {
             const props = {};

@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Contacts } from '../Contacts/Contacts';
 import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
 import { Contact } from '../Contact/Contact';
+import { SectionTitle } from '../SectionTitle/SectionTitle';
 import { setUsers, setNext, setSelectedUsers } from '../../store/actions/userActions';
 import { NoResults } from '../NoResults/NoResults';
 import { Error } from '../Error/Error';
@@ -21,7 +22,6 @@ class UserListComponent extends PureComponent {
   }
 
   async componentDidMount() {
-    //two pages to fill the screen
     if(!this.props.users.length){
       this.fetchNext();
     }
@@ -30,8 +30,8 @@ class UserListComponent extends PureComponent {
   componentWillUnmount() {
     const users = [].concat(this.props.users);
     users.forEach(user => {user.checked = false});
+    this.props.dispatch(setUsers(users));   
 
-    this.props.dispatch(setUsers(users));        
     this.props.dispatch(setSelectedUsers([]));    
   }
 
@@ -104,6 +104,7 @@ class UserListComponent extends PureComponent {
             />
           )
         }
+        <SectionTitle title="Contacts" />        
         <InfiniteScroller
           loadMore={this.fetchNext}
           className={createChat ? 'infinite-scroller_chat-create' : 'infinite-scroller_contacts'}
