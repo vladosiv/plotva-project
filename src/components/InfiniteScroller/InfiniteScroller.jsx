@@ -54,16 +54,14 @@ export class InfiniteScroller extends Component {
   }
 
   render() {
-    return this.state.isLoading ? (
-      'Loading...'
-    ) : (
+    return  (
       <div className="infinite-scroller" ref={this.setRef}>
         {this.props.children}
-        {this.props.hasMore ? (
-          <button className="infinite-scroller__button" onClick={this.loadMore}>
-            Load more
-          </button>
-        ) : null}
+        {
+          this.state.isLoading ?
+          'Loading...'
+          : false
+        }
       </div>
     );
   }

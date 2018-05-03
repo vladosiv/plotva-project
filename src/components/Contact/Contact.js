@@ -24,7 +24,7 @@ export const Contact = props => {
   let defaultName = '';
   if (userName) {
     userName.split(' ').forEach(word => {
-      defaultName += word[0];
+      defaultName += word[0].toUpperCase();
     });
   }
 

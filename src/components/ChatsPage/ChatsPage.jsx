@@ -1,36 +1,37 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { Contacts } from '../Contacts/Contacts';
 import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
 import { NoResults } from '../NoResults/NoResults';
 import { Error } from '../Error/Error';
 import { FETCH_ROOMS_ERROR } from '../../errorCodes';
 import api from '../../api';
+import { connect } from 'react-redux';
+import { setRooms, setChatNext } from '../../store/actions/chatActions';
 
-export class ChatsPage extends PureComponent {
+
+
+class ChatsPageComponent extends Component {
   constructor() {
     super();
-    this.state = {
-      rooms: [],
-      next: null,
-      error: null,
-    };
     this.fetchNext = this.fetchNext.bind(this);
   }
 
   componentDidMount() {
-    this.fetchNext(true);
+    if(!this.props.rooms.length) {
+      this.fetchNext(this.props.next || true);
+    }
   }
 
-  async fetchNext(next = this.state.next) {
+  async fetchNext(next = this.props.next) {
     try {
       if (next) {
         const response = await this.fetchRooms(next);
-        this.setState(prevState => {
-          return {
-            rooms: [...prevState.rooms, ...response.rooms],
-            next: response.next,
-          };
-        });
+        this.props.dispatch(
+          setRooms([...this.props.rooms, ...response.rooms])
+        );
+        this.props.dispatch(
+          setChatNext(response.next)
+        );
         return response;
       }
     } catch (error) {
@@ -45,8 +46,16 @@ export class ChatsPage extends PureComponent {
     const rooms = await Promise.all(
       res.items.map(async room => {
         const messages = await api.getRoomMessages(room._id);
+        let chatName;
+
+        // if (room.users.length > 2) {
+        //   chatName = room.name || 
+        // } else {
+
+        // }
+
         let chatUser = await api.getUser(room.users[1]);
-        let chatName = room.users.length > 2 ? (room.name || 'Group chat') : chatUser.name;
+        chatName = room.users.length > 2 ? (room.name || 'Group chat') : chatUser.name;
         return {
           _id: room._id,
           userName: chatName,
@@ -61,7 +70,7 @@ export class ChatsPage extends PureComponent {
   }
 
   render() {
-    const { rooms, error } = this.state;
+    const { rooms, error } = this.props;
     if (!rooms.length && !error) {
       return <NoResults text="No chats here yet..." />;
     }
@@ -74,3 +83,15 @@ export class ChatsPage extends PureComponent {
     );
   }
 }
+
+const stateToProps = state => ({
+  rooms: state.chat.rooms,
+  next: state.chat.next,
+  error: state.chat.error,
+  users: state.user.users,
+  user: state.user.user,
+});
+
+export const ChatsPage = connect(stateToProps)(ChatsPageComponent);
+
+

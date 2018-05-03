@@ -10,4 +10,6 @@ export const SET_SEARCH = 'SET_SEARCH';
 
 export const SET_CHAT_NAME = 'SET_CHAT_NAME';
 export const SET_CHAT_INFO = 'SET_CHAT_INFO';
+export const SET_CHAT_ROOMS = 'SET_CHAT_ROOMS';
+export const SET_CHAT_NEXT = 'SET_CHAT_NEXT';
 export const CLEAR_CHAT_INFO = 'CLEAR_CHAT_INFO';

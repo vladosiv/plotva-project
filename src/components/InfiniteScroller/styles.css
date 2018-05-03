@@ -6,3 +6,8 @@
   border-radius: 10px;
   background-color: #f8f8f8;
 }
+
+.infinite-scroller {
+  height: 100%;
+  overflow: auto;
+}

@@ -22,8 +22,9 @@ class UserListComponent extends PureComponent {
 
   async componentDidMount() {
     //two pages to fill the screen
-    await this.fetchNext();
-    await this.fetchNext();
+    if(!this.props.users.length){
+      this.fetchNext();
+    }
   }
 
   componentWillUnmount() {
