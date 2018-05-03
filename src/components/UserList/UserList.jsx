@@ -88,6 +88,13 @@ class UserListComponent extends PureComponent {
     if (!users.length && !error) {
       return <NoResults text="No contacts yet..." />;
     }
+    const newUsers = [...users]
+    const currentUserIndex = users.indexOf(users.find(item => item._id === user._id));
+
+    if (currentUserIndex > -1) {
+      newUsers.splice(currentUserIndex, 1)
+    }
+    
     return (
       <React.Fragment>
         {
@@ -111,7 +118,7 @@ class UserListComponent extends PureComponent {
         >
           <Contacts
             type="contactList"
-            contacts={users}
+            contacts={newUsers}
             user={user}
             search={current}
             addToChat={this.addToChat}
