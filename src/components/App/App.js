@@ -6,7 +6,6 @@ import { Header } from '../Header/Header';
 import { Footer } from '../Footer/Footer';
 import { SearchInput } from '../SearchInput/SearchInput';
 import { ChatInput } from '../ChatInput/ChatInput';
-import { Contacts } from '../Contacts/Contacts';
 import { UserList } from '../UserList/UserList';
 import { ChatsPage } from '../ChatsPage/ChatsPage';
 import { Chat } from '../Chat/Chat';
@@ -44,41 +43,6 @@ const ProfileView = () => (
   />
 );
 
-const SearchPage = () => (
-  <Layout
-    header={<Header type="search" title="" subtitle="" />}
-    content={
-      <Contacts
-        contacts={[
-          {
-            userName: 'Aaron A Aaronson',
-            content: 'Some message',
-            contentType: 'message',
-            time: '9:30',
-            size: 'medium',
-            checked: true,
-            count: 3,
-            icon: 'message-read',
-          },
-          {
-            userName: 'Aaron A Aaronson',
-            content: 'online',
-            contentType: 'online',
-            size: 'medium',
-          },
-          {
-            userName: 'Aaron A Aaronson',
-            content: 'Some message',
-            contentType: 'message',
-            size: 'medium',
-          },
-        ]}
-      />
-    }
-    footer={<Footer />}
-  />
-);
-
 const DialogPage = ({ chat }) => (
   <Layout
     header={<Header type="dialog" title={chat.title || 'Loading...'} subtitle={chat.subtitle || 'Loading...'} />}
@@ -113,7 +77,6 @@ export class App extends Component {
         <Route exact path="/chats" component={ChatView} />
         <Route exact path="/contacts" component={ContactsPage} />
         <Route exact path="/chat/:id" component={DialogPageContainer} />
-        <Route exact path="/search" component={SearchPage} />
         <Route exact path="/init/create/:name" component={Init} />
         <Route exact path="/init/join/:roomId" component={Init} />
         <Route exact path="/profile" component={ProfileView} />

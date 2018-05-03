@@ -104,8 +104,18 @@ class UserListComponent extends PureComponent {
             />
           )
         }
-        <InfiniteScroller loadMore={this.fetchNext}>
-          <Contacts type="contactList" contacts={users} user={user} search={current} addToChat={this.addToChat} createChat={createChat} />
+        <InfiniteScroller
+          loadMore={this.fetchNext}
+          className={createChat ? 'infinite-scroller_chat-create' : 'infinite-scroller_contacts'}
+        >
+          <Contacts
+            type="contactList"
+            contacts={users}
+            user={user}
+            search={current}
+            addToChat={this.addToChat}
+            createChat={createChat}
+          />
           {error ? <Error code={FETCH_CONTACTS_ERROR} /> : null}
         </InfiniteScroller>
       </React.Fragment>

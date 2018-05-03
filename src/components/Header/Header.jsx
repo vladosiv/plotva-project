@@ -73,13 +73,13 @@ class HeaderComponent extends Component {
         <div className="header__right">
           {
             type === "contacts" &&
-            (this.props.createChat
-            ? <Link to="/chats">
-                <Icon type="header-add" onClick = {this.newChat}/>
-              </Link>
-            : <Link to="/search">
-                <Icon type="header-add" />
-              </Link>)
+            (
+              this.props.createChat
+              ? <Link to="/chats">
+                  <Icon type="header-add" onClick = {this.newChat}/>
+                </Link>
+              : false
+            )
           }
           {type === "chats"  && <Link to="/create_chat"><Icon type="header-write" /></Link>}
           {type === "search" && <Link to="/contacts"><Header type='action' txt="Cancel"/></Link>}

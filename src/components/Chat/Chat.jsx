@@ -25,9 +25,16 @@ class ChatComponent extends PureComponent {
     this.props.fetchChat(this.props.match.params.id);
   }
 
+
+  componentWillReceiveProps() {
+    
+  }
+
   componentWillUnmount() {
     this.props.clearChat();
   }
+
+
 
   async joinRoom() {
     try {
@@ -59,7 +66,11 @@ class ChatComponent extends PureComponent {
 
     return (
       <InfiniteScroller loadMore={this.fetchNext}>
-        {messages[match.params.id] ? <MessagesList messages={messages[match.params.id].messages} /> : null}
+        {
+          messages[match.params.id]
+          ? <MessagesList messages={messages[match.params.id].messages} />
+          : false
+        }
         {error ? <Error code={FETCH_MESSAGES_ERROR} /> : null}
       </InfiniteScroller>
     );

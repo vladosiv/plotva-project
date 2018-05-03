@@ -55,7 +55,7 @@ export class InfiniteScroller extends Component {
 
   render() {
     return  (
-      <div className="infinite-scroller" ref={this.setRef}>
+      <div className={`infinite-scroller ${this.props.className || ''}`} ref={this.setRef}>
         {this.props.children}
         {
           this.state.isLoading ?

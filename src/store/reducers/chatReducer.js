@@ -28,7 +28,11 @@ export const chatReducer = (state = defaultState, { type, payload }) => {
       };
 
     case CLEAR_CHAT_INFO:
-      return { ...defaultState };
+      return {
+        ...state,
+        title: '',
+        subtitle: '',
+      };
 
     default:
       return state;

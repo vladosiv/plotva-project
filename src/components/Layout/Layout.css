@@ -30,7 +30,6 @@ body,
 
 .layout__content {
   width: 100%;
-  padding: 0 8px;
   overflow: hidden;
   flex: 0 1 100%;
 }

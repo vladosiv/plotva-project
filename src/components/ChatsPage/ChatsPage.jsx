@@ -42,24 +42,25 @@ class ChatsPageComponent extends Component {
   }
 
   async fetchRooms(next) {
+    const {user} = this.props;    
     const res = await api.getCurrentUserRooms(next);
     const rooms = await Promise.all(
       res.items.map(async room => {
-        const messages = await api.getRoomMessages(room._id);
-        let chatName;
+        const roomMessages = await api.getRoomMessages(room._id);
+        const messages = roomMessages.items;
 
-        // if (room.users.length > 2) {
-        //   chatName = room.name || 
-        // } else {
+        let recepient = await api.getUser(
+          room.users.find(
+            roomUserID => roomUserID !== user._id
+          )
+        );
 
-        // }
-
-        let chatUser = await api.getUser(room.users[1]);
-        chatName = room.users.length > 2 ? (room.name || 'Group chat') : chatUser.name;
+        const chatName = room.users.length > 2 ? room.name : recepient.name;
+        const lastMessage = messages[messages.length - 1] && messages[messages.length - 1].message;
         return {
           _id: room._id,
           userName: chatName,
-          content: (messages.items[messages.items.length - 1] && messages.items[messages.items.length - 1].message) || 'No messages',
+          content: lastMessage || 'No messages',
         };
       }),
     );

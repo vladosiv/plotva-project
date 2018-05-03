@@ -8,6 +8,16 @@
 }
 
 .infinite-scroller {
+  overflow-y: auto;
+  overflow-x: hidden;
   height: 100%;
-  overflow: auto;
+}
+
+.infinite-scroller_contacts {
+  height: calc(100% - 118px);
+}
+
+.infinite-scroller_chat-create {
+  height: calc(100% - 42px);
+  
 }
