@@ -68,6 +68,7 @@ class ChatsPageComponent extends Component {
           _id: room._id,
           userName: chatName,
           content: lastMessage || 'No messages',
+          userCount: room.users.length
         };
       }),
     );

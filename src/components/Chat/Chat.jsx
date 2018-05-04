@@ -6,7 +6,6 @@ import { MessagesList } from '../MessagesList/MessagesList';
 import { fetchMessages } from '../../store/actions/messagesActions';
 import { fetchChat, clearChat } from '../../store/actions/chatActions';
 import { Error } from '../Error/Error';
-import { NoResults } from '../NoResults/NoResults';
 import { Loader } from '../Loader/Loader';
 import { FETCH_MESSAGES_ERROR } from '../../errorCodes';
 import api from '../../api';

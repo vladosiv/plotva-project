@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 import { Layout } from '../Layout/Layout';
 import { Header } from '../Header/Header';
 import { Footer } from '../Footer/Footer';
@@ -43,9 +43,9 @@ const ProfileView = () => (
   />
 );
 
-const DialogPage = ({ chat }) => (
+const DialogPage = () => (
   <Layout
-    header={<Header type="dialog" title={chat.title || 'Loading...'} subtitle={chat.subtitle || 'Loading...'} />}
+    header={<Header type="dialog" />}
     content={<Chat />}
     footer={<ChatForm />}
   />
@@ -63,11 +63,7 @@ const CreateChatPage = () => (
     footer={<Footer path="Chats" />}
   />
 );
-const stateToProps = state => ({
-  chat: state.chat,
-});
 
-const DialogPageContainer = connect(stateToProps)(DialogPage);
 
 export class App extends Component {
   render() {
@@ -76,7 +72,7 @@ export class App extends Component {
         <Route exact path="/" component={Login} />
         <Route exact path="/chats" component={ChatView} />
         <Route exact path="/contacts" component={ContactsPage} />
-        <Route exact path="/chat/:id" component={DialogPageContainer} />
+        <Route exact path="/chat/:id" component={DialogPage} />
         <Route exact path="/init/create/:name" component={Init} />
         <Route exact path="/init/join/:roomId" component={Init} />
         <Route exact path="/profile" component={ProfileView} />

@@ -50,9 +50,13 @@ class HeaderComponent extends Component {
   };
   
   render() {
-    let {title, subtitle, type = "chats"} = this.props;
+    let {title, subtitle, type = "chats", rooms, match} = this.props;
     let size = subtitle ? "lg" : "sm";
-
+    if(type === "dialog") {
+      const room = rooms.find(room => room._id === match.params.id);
+      title = (room && room.userName) || 'Loading...';
+      subtitle = (room && `${room.userCount} members`) || 'Loading...';
+    }
     return (
 
       <div className={`header header_${size}`}>
@@ -94,7 +98,8 @@ const stateToProps = state => ({
   selectedUsers: state.user.selectedUsers,
   chatName: state.chatName.currentChatName,
   user: state.user.user,
-  users: state.user.users
+  users: state.user.users,
+  rooms: state.chat.rooms
 });
 
 export const Header = connect(stateToProps)(withRouter(HeaderComponent));
