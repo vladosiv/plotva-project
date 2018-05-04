@@ -7,6 +7,7 @@ import { fetchMessages } from '../../store/actions/messagesActions';
 import { fetchChat, clearChat } from '../../store/actions/chatActions';
 import { Error } from '../Error/Error';
 import { NoResults } from '../NoResults/NoResults';
+import { Loader } from '../Loader/Loader';
 import { FETCH_MESSAGES_ERROR } from '../../errorCodes';
 import api from '../../api';
 
@@ -61,7 +62,7 @@ class ChatComponent extends PureComponent {
     const { messages, match } = this.props;
 
     if (!messages[match.params.id] && !error) {
-      return <NoResults text="No messages here yet..." />;
+      return <Loader />;
     }
 
     return (

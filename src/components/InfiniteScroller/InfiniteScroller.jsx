@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import debounce from 'debounce';
+import { Loader } from '../Loader/Loader';
 
 import './styles.css';
 
@@ -59,7 +60,7 @@ export class InfiniteScroller extends Component {
         {this.props.children}
         {
           this.state.isLoading ?
-          'Loading...'
+          <Loader />
           : false
         }
       </div>

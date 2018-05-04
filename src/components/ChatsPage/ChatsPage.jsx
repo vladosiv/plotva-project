@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Contacts } from '../Contacts/Contacts';
 import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
-import { NoResults } from '../NoResults/NoResults';
+import { Loader } from '../Loader/Loader';
 import { Error } from '../Error/Error';
 import { FETCH_ROOMS_ERROR } from '../../errorCodes';
 import api from '../../api';
@@ -54,8 +54,8 @@ class ChatsPageComponent extends Component {
         }
 
         const roomMessages = this.props.messages[room._id].messages;
-        const last = roomMessages.length - 1;
-        const lastMessage = roomMessages[last].text;
+        const last = roomMessages.length && roomMessages.length - 1;
+        const lastMessage = roomMessages[last] && roomMessages[last].text;
         
         let recepient = await api.getUser(
           room.users.find(
@@ -80,7 +80,7 @@ class ChatsPageComponent extends Component {
   render() {
     const { rooms, error } = this.props;
     if (!rooms.length && !error) {
-      return <NoResults text="No chats here yet..." />;
+      return <Loader />;
     }
 
     return (
