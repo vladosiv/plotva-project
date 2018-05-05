@@ -17,7 +17,7 @@ export const setNext = payload => ({
 });
 
 export const fetchMessages = roomId => async (dispatch, getState) => {
-  const room = getState().messages[roomId];
+  const room = getState().messages.rooms[roomId];
   const currentUserId = getState().user.user._id;
   const hasMessages = room && room.messages.length > 0;
   let next = (room && room.next) || null;

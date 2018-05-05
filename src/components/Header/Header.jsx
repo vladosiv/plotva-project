@@ -43,8 +43,8 @@ class HeaderComponent extends Component {
   render() {
     let {title, subtitle, type = "chats", rooms, match} = this.props;
     let size = subtitle ? "lg" : "sm";
-    if(type === "dialog") {
-      const room = rooms[match.params.id];
+    const room = rooms && rooms[match.params.id];
+    if(type === "dialog" && room) {
       title = (room && room.name) || 'Loading...';
       subtitle = (room && `${room.count} members`) || 'Loading...';
     }

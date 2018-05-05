@@ -21,7 +21,8 @@ class ChatComponent extends PureComponent {
   componentDidMount() {
     const {rooms, match} = this.props;
     this.joinRoom();
-    this.fetchNext((rooms[match.params.id] && rooms[match.params.id].next) || true);
+
+    this.fetchNext((rooms && rooms[match.params.id] && rooms[match.params.id].next) || true);
   }
 
   async joinRoom() {
@@ -53,7 +54,7 @@ class ChatComponent extends PureComponent {
     }
 
     return (
-      <InfiniteScroller loadMore={this.fetchNext}>
+      <InfiniteScroller loadMore={this.fetchNext} next={room.next}>
         {
           room
           ? <MessagesList messages={room.messages} />
