@@ -32,7 +32,7 @@ export const userReducer = (state = {users: [], selectedUsers: []}, action) => {
         selectedUsers: []
       };
     }
-    
+
     default:
       return state;
   }

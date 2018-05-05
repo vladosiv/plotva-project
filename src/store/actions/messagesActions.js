@@ -89,6 +89,11 @@ export const sendMessage = (roomId, messageText) => async (dispatch, getState) =
   }
 };
 
+export const setChatName = query => ({
+  type: MESSAGES_ACTION_TYPES.SET_CHAT_NAME,
+  payload: query,
+});
+
 const getMessages = (messages, currentUserId) => 
   messages.map(message => ({
     id: message._id,
@@ -96,4 +101,6 @@ const getMessages = (messages, currentUserId) =>
     time: message.created_at,
     isMy: currentUserId === message.userId,
   }));
+
+  
 

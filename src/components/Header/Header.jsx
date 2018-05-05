@@ -85,7 +85,7 @@ class HeaderComponent extends Component {
 
 const stateToProps = state => ({
   selectedUsers: state.user.selectedUsers,
-  chatName: state.chat.currentChatName,
+  chatName: state.messages.currentChatName,
   user: state.user.user,
   users: state.user.users,
   rooms: state.messages.rooms

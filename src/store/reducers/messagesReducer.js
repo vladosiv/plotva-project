@@ -1,6 +1,6 @@
 import { MESSAGES_ACTION_TYPES } from '../actions/actionTypes';
 
-export const messagesReducer = (state = {next: true}, action) => {
+export const messagesReducer = (state = {next: true, currentChatName: ''}, action) => {
   switch (action.type) {
     case MESSAGES_ACTION_TYPES.MESSAGES_SET:
       return {
@@ -40,6 +40,13 @@ export const messagesReducer = (state = {next: true}, action) => {
         ...state,
         next: action.payload
       } 
+
+    case MESSAGES_ACTION_TYPES.SET_CHAT_NAME:
+      return {
+        ...state,
+        currentChatName: action.payload,
+      };
+
     default:
       return state;
   }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import './ChatInput.css';
-import { setChatName } from '../../store/actions/chatActions';
+import { setChatName } from '../../store/actions/messagesActions';
 
 const stateToProps = state => ({});
 
