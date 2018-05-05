@@ -1,37 +1,16 @@
-import { SET_CHAT_INFO, CLEAR_CHAT_INFO, SET_CHAT_ROOMS, SET_CHAT_NEXT } from '../actions/actionTypes';
+import { CHAT_ACTION_TYPES } from '../actions/actionTypes';
 
 const defaultState = {
-  title: '',
-  subtitle: '',
-  rooms: [],
-  next: null,
-  error: null
+  currentChatName: ''
 };
 
 export const chatReducer = (state = defaultState, { type, payload }) => {
   switch (type) {
-    case SET_CHAT_INFO:
-      return {
-        ...state,
-        title: payload.title,
-        subtitle: payload.subtitle,
-      };
-    case SET_CHAT_ROOMS:
-      return {
-        ...state,
-        rooms: payload,
-      };
-    case SET_CHAT_NEXT:
-      return {
-        ...state,
-        next: payload,
-      };
 
-    case CLEAR_CHAT_INFO:
+    case CHAT_ACTION_TYPES.SET_CHAT_NAME:
       return {
         ...state,
-        title: '',
-        subtitle: '',
+        currentChatName: payload,
       };
 
     default:

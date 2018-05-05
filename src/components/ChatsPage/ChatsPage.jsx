@@ -6,8 +6,7 @@ import { Error } from '../Error/Error';
 import { FETCH_ROOMS_ERROR } from '../../errorCodes';
 import api from '../../api';
 import { connect } from 'react-redux';
-import { setRooms, setChatNext } from '../../store/actions/chatActions';
-import { fetchMessages } from '../../store/actions/messagesActions';
+import { fetchMessages, setNext } from '../../store/actions/messagesActions';
 
 
 
@@ -18,23 +17,14 @@ class ChatsPageComponent extends Component {
   }
 
   componentDidMount() {
-    if(!this.props.rooms.length) {
-      this.fetchNext(this.props.next || true);
-    }
+    this.fetchNext(this.props.next);
   }
 
-  async fetchNext(next = this.props.next) {
+  async fetchNext(next = this.props.next) {   
     try {
       if (next) {
-        const response = await this.fetchRooms(next);
-        this.props.dispatch(
-          setRooms([...this.props.rooms, ...response.rooms])
-        );
-        this.props.dispatch(
-          setChatNext(response.next)
-        );
-        return response;
-      }
+        await this.fetchRooms(next);     
+      }   
     } catch (error) {
       this.setState({
         error,
@@ -42,51 +32,34 @@ class ChatsPageComponent extends Component {
     }
   }
 
-  async fetchRooms(next) {
-    const {user} = this.props;    
+  async fetchRooms(next) {  
     const res = await api.getCurrentUserRooms(next);
-    const rooms = await Promise.all(
+    await Promise.all(
       res.items.map(async room => {
-        await this.props.dispatch(fetchMessages(room._id));
-        
-        while(this.props.messages[room._id].next) {
-          await this.props.dispatch(fetchMessages(room._id));
-        }
-
-        const roomMessages = this.props.messages[room._id].messages;
-        const last = roomMessages.length && roomMessages.length - 1;
-        const lastMessage = roomMessages[last] && roomMessages[last].text;
-        
-        let recepient = await api.getUser(
-          room.users.find(
-            roomUserID => roomUserID !== user._id
-          )
-        );
-
-        const chatName = room.users.length > 2 ? room.name : recepient.name;
-        return {
-          _id: room._id,
-          userName: chatName,
-          content: lastMessage || 'No messages',
-          userCount: room.users.length
-        };
+        await this.props.dispatch(fetchMessages(room._id));        
       }),
     );
-    return {
-      rooms,
-      next: res.next,
-    };
+    await this.props.dispatch(setNext(res.next))
+    return res;
   }
 
   render() {
     const { rooms, error } = this.props;
-    if (!rooms.length && !error) {
+
+    if (!rooms && !error) {
       return <Loader />;
     }
 
+    const chats = Object.keys(rooms).map(key => ({
+      _id: rooms[key].roomId,
+      userName: rooms[key].name,
+      content: rooms[key].lastMessage || 'No messages',
+      userCount: rooms[key].count
+    }))
+
     return (
-      <InfiniteScroller hasMore={!!this.next} loadMore={this.fetchNext}>
-        <Contacts contacts={rooms} search="" />
+      <InfiniteScroller next={this.props.next} loadMore={this.fetchNext}>
+        <Contacts contacts={chats} search="" />
         {error ? <Error code={FETCH_ROOMS_ERROR} /> : null}
       </InfiniteScroller>
     );
@@ -94,10 +67,8 @@ class ChatsPageComponent extends Component {
 }
 
 const stateToProps = state => ({
-  rooms: state.chat.rooms,
-  messages: state.messages,
-  next: state.chat.next,
-  error: state.chat.error,
+  rooms: state.messages.rooms,
+  next: state.messages.next,
   users: state.user.users,
   user: state.user.user,
 });

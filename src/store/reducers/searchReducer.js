@@ -1,4 +1,4 @@
-import { SET_SEARCH } from '../actions/actionTypes';
+import { SEARCH_ACTION_TYPES } from '../actions/actionTypes';
 
 export function searchReducer(state, action) {
   if (!state) {
@@ -7,7 +7,7 @@ export function searchReducer(state, action) {
     };
   }
 
-  if (action.type === SET_SEARCH) {
+  if (action.type === SEARCH_ACTION_TYPES.SET_SEARCH) {
     return {
       ...state,
       currentUserSearch: action.letters,

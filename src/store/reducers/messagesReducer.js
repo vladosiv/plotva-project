@@ -1,33 +1,45 @@
-import { MESSAGES_SET, MESSAGES_APPENDED } from '../actions/actionTypes';
+import { MESSAGES_ACTION_TYPES } from '../actions/actionTypes';
 
-export const messagesReducer = (state = {}, action) => {
+export const messagesReducer = (state = {next: true}, action) => {
   switch (action.type) {
-    case MESSAGES_SET:
+    case MESSAGES_ACTION_TYPES.MESSAGES_SET:
       return {
         ...state,
-        [action.payload.roomId]: {
-          messages: [...action.payload.messages],
-          next: action.payload.next,
-        },
+        rooms: {
+          ...state.rooms,
+          [action.payload.roomId]: action.payload
+        }
       };
-    case MESSAGES_APPENDED:
+    case MESSAGES_ACTION_TYPES.MESSAGES_APPENDED:
       if (state[action.payload.roomId] && state[action.payload.roomId].messages.length > 0) {
         return {
           ...state,
-          [action.payload.roomId]: {
-            ...state[action.payload.roomId],
-            messages: [...state[action.payload.roomId].messages, ...action.payload.messages],
-            next: action.payload.next,
-          },
+          rooms: {
+            ...state.rooms,
+            [action.payload.roomId]: {
+              ...state[action.payload.roomId],
+              messages: [...state[action.payload.roomId].messages, ...action.payload.messages],
+              next: action.payload.next,
+            },
+          }
         };
       }
       return {
         ...state,
-        [action.payload.roomId]: {
-          messages: [...action.payload.messages],
-          next: null,
-        },
+        rooms: {
+          ...state.rooms,
+          [action.payload.roomId]: {
+            messages: [...action.payload.messages],
+            next: null,
+          },
+        }
       };
+
+    case MESSAGES_ACTION_TYPES.MESSAGES_SET_NEXT:
+      return {
+        ...state,
+        next: action.payload
+      } 
     default:
       return state;
   }

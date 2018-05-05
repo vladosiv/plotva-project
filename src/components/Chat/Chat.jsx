@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
 import { MessagesList } from '../MessagesList/MessagesList';
 import { fetchMessages } from '../../store/actions/messagesActions';
-import { fetchChat, clearChat } from '../../store/actions/chatActions';
 import { Error } from '../Error/Error';
 import { Loader } from '../Loader/Loader';
 import { FETCH_MESSAGES_ERROR } from '../../errorCodes';
@@ -20,21 +19,10 @@ class ChatComponent extends PureComponent {
   }
 
   componentDidMount() {
+    const {rooms, match} = this.props;
     this.joinRoom();
-    this.fetchNext();
-    this.props.fetchChat(this.props.match.params.id);
+    this.fetchNext((rooms[match.params.id] && rooms[match.params.id].next) || true);
   }
-
-
-  componentWillReceiveProps() {
-    
-  }
-
-  componentWillUnmount() {
-    this.props.clearChat();
-  }
-
-
 
   async joinRoom() {
     try {
@@ -58,17 +46,17 @@ class ChatComponent extends PureComponent {
 
   render() {
     const { error } = this.state;
-    const { messages, match } = this.props;
+    const { rooms, match } = this.props;
 
-    if (!messages[match.params.id] && !error) {
+    if (!rooms[match.params.id] && !error) {
       return <Loader />;
     }
 
     return (
       <InfiniteScroller loadMore={this.fetchNext}>
         {
-          messages[match.params.id]
-          ? <MessagesList messages={messages[match.params.id].messages} />
+          rooms[match.params.id]
+          ? <MessagesList messages={rooms[match.params.id].messages} />
           : false
         }
         {error ? <Error code={FETCH_MESSAGES_ERROR} /> : null}
@@ -79,7 +67,7 @@ class ChatComponent extends PureComponent {
 
 const stateToProps = state => ({
   user: state.user.user,
-  messages: state.messages,
+  rooms: state.messages.rooms,
 });
 
-export const Chat = withRouter(connect(stateToProps, { fetchMessages, fetchChat, clearChat })(ChatComponent));
+export const Chat = withRouter(connect(stateToProps, { fetchMessages })(ChatComponent));

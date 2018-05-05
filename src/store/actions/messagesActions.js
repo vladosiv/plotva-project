@@ -1,13 +1,18 @@
-import { MESSAGES_SET, MESSAGES_APPENDED } from './actionTypes';
+import { MESSAGES_ACTION_TYPES } from './actionTypes';
 import api from '../../api';
 
-export const setMessages = payload => ({
-  type: MESSAGES_SET,
+export const setRoom = payload => ({
+  type: MESSAGES_ACTION_TYPES.MESSAGES_SET,
   payload,
 });
 
 export const appendMessages = payload => ({
-  type: MESSAGES_APPENDED,
+  type: MESSAGES_ACTION_TYPES.MESSAGES_APPENDED,
+  payload,
+});
+
+export const setNext = payload => ({
+  type: MESSAGES_ACTION_TYPES.MESSAGES_SET_NEXT,
   payload,
 });
 
@@ -27,23 +32,31 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
   let response;
   try {
     if (!hasMessages) {
+      const room = await api.getRoom(roomId);      
       response = await api.getRoomMessages(roomId);
-      const messages = response.items.map(message => ({
-        id: message._id,
-        text: message.message,
-        time: message.created_at,
-        isMy: currentUserId === message.userId,
+
+      const messages = getMessages(response.items, currentUserId);
+      const last = messages.length && messages.length - 1;
+      const lastMessage = messages[last] && messages[last].text;
+
+      let recepient = await api.getUser(
+        room.users.find(roomUserID => roomUserID !== currentUserId)
+      );
+
+      const name = room.users.length > 2 ? room.name : recepient.name;
+      
+      dispatch(setRoom({
+        roomId,
+        name,
+        lastMessage,
+        messages,
+        count: room.users.length,
+        next: response.next
       }));
 
-      dispatch(setMessages({ roomId, messages, next: response.next }));
     } else if (hasMessages && next) {
       response = await api.getMessages(next);
-      const messages = response.items.map(message => ({
-        id: message._id,
-        text: message.message,
-        time: message.created_at,
-        isMy: currentUserId === message.userId,
-      }));
+      const messages = getMessages(response.items, currentUserId);
 
       dispatch(appendMessages({ roomId, messages, next: response.next }));
     } else {
@@ -75,3 +88,12 @@ export const sendMessage = (roomId, messageText) => async (dispatch, getState) =
     console.log(error);
   }
 };
+
+const getMessages = (messages, currentUserId) => 
+  messages.map(message => ({
+    id: message._id,
+    text: message.message,
+    time: message.created_at,
+    isMy: currentUserId === message.userId,
+  }));
+

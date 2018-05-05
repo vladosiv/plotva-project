@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import debounce from 'debounce';
 import { Loader } from '../Loader/Loader';
 
@@ -18,6 +19,20 @@ export class InfiniteScroller extends Component {
 
   componentDidMount() {
     document.body.addEventListener('scroll', this.handleScroll, { passive: true, capture: true });
+    // const element = ReactDOM.findDOMNode(this);
+    // element.scrollTop = element.scrollHeight
+  }
+
+  componentWillUpdate() {
+    // const element = ReactDOM.findDOMNode(this);
+    // this.shouldScrollBottom = element.scrollTop + element.offsetHeight === element.scrollHeight;
+  }
+   
+  componentDidUpdate() {
+    //  if (this.state.isLoading) {
+    //    const element = ReactDOM.findDOMNode(this);
+    //    element.scrollTop = element.scrollHeight
+    //  }
   }
 
   componentWillUnmount() {
@@ -25,12 +40,12 @@ export class InfiniteScroller extends Component {
   }
 
   handleScroll() {
-    if (this.container) {
-      const scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-      const windowHeight = window.innerHeight;
-      const maxScroll = this.container.clientHeight - 500;
+    if (this.container && this.props.next) {
+      const scrollTop = this.container.scrollTop;
+      const scrollHeight = this.container.scrollHeight;
+      const clientHeight = this.container.clientHeight;
       if (!this.state.isLoading) {
-        if (scrollTop + windowHeight >= maxScroll) {
+        if (scrollHeight <= scrollTop + this.container.clientHeight + 50 ) {
           this.loadMore();
         }
       }

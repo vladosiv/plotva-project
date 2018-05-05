@@ -115,6 +115,7 @@ class UserListComponent extends PureComponent {
         <InfiniteScroller
           loadMore={this.fetchNext}
           className={createChat ? 'infinite-scroller_chat-create' : 'infinite-scroller_contacts'}
+          next={this.props.next}
         >
           <Contacts
             type="contactList"

@@ -53,9 +53,9 @@ class HeaderComponent extends Component {
     let {title, subtitle, type = "chats", rooms, match} = this.props;
     let size = subtitle ? "lg" : "sm";
     if(type === "dialog") {
-      const room = rooms.find(room => room._id === match.params.id);
-      title = (room && room.userName) || 'Loading...';
-      subtitle = (room && `${room.userCount} members`) || 'Loading...';
+      const room = rooms[match.params.id];
+      title = (room && room.name) || 'Loading...';
+      subtitle = (room && `${room.count} members`) || 'Loading...';
     }
     return (
 
@@ -96,10 +96,10 @@ class HeaderComponent extends Component {
 
 const stateToProps = state => ({
   selectedUsers: state.user.selectedUsers,
-  chatName: state.chatName.currentChatName,
+  chatName: state.chat.currentChatName,
   user: state.user.user,
   users: state.user.users,
-  rooms: state.chat.rooms
+  rooms: state.messages.rooms
 });
 
 export const Header = connect(stateToProps)(withRouter(HeaderComponent));

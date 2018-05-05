@@ -31,8 +31,8 @@ class ContactsComponent extends Component {
   createRoomWithUser = async (name, userId) => {
     try {
       const room = await api.createRoom({ name });
+      await this.joinUserToRoom(userId, room._id);      
       this.props.history.push(`/chat/${room._id}`);
-      await this.joinUserToRoom(userId, room._id);
     } catch (err) {
       this.setState({ error: 'Произошла при создании комнаты.' });
     }
