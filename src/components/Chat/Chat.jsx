@@ -47,16 +47,16 @@ class ChatComponent extends PureComponent {
   render() {
     const { error } = this.state;
     const { rooms, match } = this.props;
-
-    if (!rooms[match.params.id] && !error) {
+    const room = rooms && rooms[match.params.id];
+    if (!room && !error) {
       return <Loader />;
     }
 
     return (
       <InfiniteScroller loadMore={this.fetchNext}>
         {
-          rooms[match.params.id]
-          ? <MessagesList messages={rooms[match.params.id].messages} />
+          room
+          ? <MessagesList messages={room.messages} />
           : false
         }
         {error ? <Error code={FETCH_MESSAGES_ERROR} /> : null}
