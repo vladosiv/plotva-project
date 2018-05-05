@@ -19,3 +19,8 @@ export const setSelectedUsers = users => ({
   type: USER_ACTION_TYPES.SET_SELECTED,
   users,
 });
+
+export const deselectUsers = users => ({
+  type: USER_ACTION_TYPES.DESELECT_USERS,
+  users,
+});

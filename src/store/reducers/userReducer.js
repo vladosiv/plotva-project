@@ -22,6 +22,17 @@ export const userReducer = (state = {users: [], selectedUsers: []}, action) => {
         ...state,
         selectedUsers: action.users,
       };
+
+    case USER_ACTION_TYPES.DESELECT_USERS:{
+      const users = [].concat(state.users);
+      users.forEach(user => {user.checked = false});
+      return {
+        ...state,
+        users: users,
+        selectedUsers: []
+      };
+    }
+    
     default:
       return state;
   }

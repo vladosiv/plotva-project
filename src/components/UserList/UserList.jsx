@@ -1,10 +1,12 @@
 import React, { PureComponent } from 'react';
+
 import { Contacts } from '../Contacts/Contacts';
 import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
 import { Contact } from '../Contact/Contact';
 import { SectionTitle } from '../SectionTitle/SectionTitle';
-import { setUsers, setNext, setSelectedUsers } from '../../store/actions/userActions';
-import { NoResults } from '../NoResults/NoResults';
+
+import { setUsers, setNext, setSelectedUsers, deselectUsers } from '../../store/actions/userActions';
+import { Loader } from '../Loader/Loader';
 import { Error } from '../Error/Error';
 import { FETCH_CONTACTS_ERROR } from '../../errorCodes';
 import { connect } from 'react-redux';
@@ -28,11 +30,7 @@ class UserListComponent extends PureComponent {
   }
 
   componentWillUnmount() {
-    const users = [].concat(this.props.users);
-    users.forEach(user => {user.checked = false});
-    this.props.dispatch(setUsers(users));   
-
-    this.props.dispatch(setSelectedUsers([]));    
+    this.props.dispatch(deselectUsers());   
   }
 
   async fetchNext() {
@@ -79,14 +77,13 @@ class UserListComponent extends PureComponent {
 
     current.checked = !current.checked;
     this.props.dispatch(setUsers(users));
-    
   }
 
   render() {
     const { error } = this.state;
     const { users, user, createChat, current } = this.props;
     if (!users.length && !error) {
-      return <NoResults text="No contacts yet..." />;
+      return <Loader />;
     }
     const newUsers = [...users]
     const currentUserIndex = users.indexOf(users.find(item => item._id === user._id));
