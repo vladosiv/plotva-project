@@ -15,13 +15,15 @@ const {
  * Setup mongo configuration
  */
 const DATABASE_CONFIG = {
-    user: 'admin',
-    password: 'admin',
+    user: MONGO_USER,
+    password: MONGO_PASSWORD,
     host: MONGO_HOST,
     port: MONGO_PORT,
     local: MONGO_LOCAL !== 'false',
     database: MONGO_DATABASE
 };
+
+console.log(DATABASE_CONFIG)
 
 /**
  * Socket.io server

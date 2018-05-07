@@ -22,13 +22,6 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
   const hasMessages = room && room.messages.length > 0;
   let next = (room && room.next) || null;
 
-  if (next) {
-    next = {
-      ...next,
-      order: { created_at: -1 },
-    };
-  }
-
   let response;
   try {
     if (!hasMessages) {
