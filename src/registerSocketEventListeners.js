@@ -8,6 +8,7 @@ export const registerSocketEventListeners = async store => {
         id: result._id,
         text: result.message,
         time: result.created_at,
+        userId: result.userId,
         isMy: store.getState().user.user._id === result.userId,
       },
     ];

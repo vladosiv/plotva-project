@@ -26,6 +26,7 @@ export const setNext = payload => ({
 const getMessages = (messages, currentUserId) => 
   messages.map(message => ({
     id: message._id,
+    userId: message.userId,    
     text: message.message,
     time: message.created_at,
     isMy: currentUserId === message.userId,
@@ -86,14 +87,7 @@ export const sendMessage = (roomId, messageText) => async (dispatch, getState) =
   try {
     const currentUserId = getState().user.user._id;
     const response = await api.sendMessage(roomId, messageText);
-    const message = [
-      {
-        id: response._id,
-        text: response.message,
-        time: response.created_at,
-        isMy: currentUserId === response.userId,
-      },
-    ];
+    const message = getMessages([response], currentUserId);
     dispatch(prependMessages({ roomId, messages: message }));
     return response;
   } catch (error) {
