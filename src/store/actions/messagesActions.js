@@ -11,6 +11,13 @@ export const appendMessages = payload => ({
   payload,
 });
 
+export const prependMessages = payload => ({
+  type: MESSAGES_ACTION_TYPES.MESSAGES_PREPENDED,
+  payload,
+});
+
+
+
 export const setNext = payload => ({
   type: MESSAGES_ACTION_TYPES.MESSAGES_SET_NEXT,
   payload,
@@ -30,6 +37,13 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
   const hasMessages = room && room.messages.length > 0;
   let next = (room && room.next) || null;
 
+  if(next) {
+    next = {
+      ...next,
+      lastCreatedAt: true
+    }
+  }
+
   let response;
   try {
     if (!hasMessages) {
@@ -38,7 +52,6 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
 
       const messages = getMessages(response.items, currentUserId);
       const lastMessage = messages[0] && messages[0].text;
-      let lastCreatedAt = true;
       let recepient = await api.getUser(
         room.users.find(roomUserID => roomUserID !== currentUserId)
       );
@@ -51,7 +64,7 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
         lastMessage,
         messages,
         count: room.users.length,
-        next: {...response.next, lastCreatedAt}
+        next: response.next
       }));
 
     } else if (hasMessages && next) {
@@ -81,8 +94,7 @@ export const sendMessage = (roomId, messageText) => async (dispatch, getState) =
         isMy: currentUserId === response.userId,
       },
     ];
-
-    dispatch(appendMessages({ roomId, messages: message }));
+    dispatch(prependMessages({ roomId, messages: message }));
     return response;
   } catch (error) {
     console.log(error);

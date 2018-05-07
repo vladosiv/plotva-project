@@ -46,6 +46,37 @@ export const messagesReducer = (state = initialState, action) => {
       };
     }
 
+    case MESSAGES_ACTION_TYPES.MESSAGES_PREPENDED: {
+      const rooms = state.rooms;
+      const room = rooms[action.payload.roomId];
+
+      if (room && room.messages.length > 0) {
+        return {
+          ...state,
+          rooms: {
+            ...rooms,
+            [action.payload.roomId]: {
+              ...room,
+              messages: [...action.payload.messages, ...room.messages],
+              next: action.payload.next,
+              lastMessage: action.payload.messages[0].text
+            },
+          }
+        };
+      }
+      return {
+        ...state,
+        rooms: {
+          ...rooms,
+          [action.payload.roomId]: {
+            ...room,
+            messages: [...action.payload.messages],
+            next: null,
+          },
+        }
+      };
+    }
+
     case MESSAGES_ACTION_TYPES.MESSAGES_SET_NEXT:
       return {
         ...state,

@@ -1,5 +1,5 @@
 import api from './api';
-import { appendMessages } from './store/actions/messagesActions';
+import { prependMessages } from './store/actions/messagesActions';
 
 export const registerSocketEventListeners = async store => {
   await api.onMessage(result => {
@@ -18,7 +18,7 @@ export const registerSocketEventListeners = async store => {
     });
 
     store.dispatch(
-      appendMessages({
+      prependMessages({
         roomId: result.roomId,
         messages: message,
       }),

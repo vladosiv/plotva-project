@@ -18,7 +18,7 @@ const {ObjectId, Timestamp} = require('mongodb');
 async function pageableCollection(collection, {lastId, lastCreatedAt, order, limit = 10, ...query} = {}) {
     let count = await collection.find(query).count();
 
-    if(lastCreatedAt) {
+    if(lastId && lastCreatedAt) {
         query._id = {
             $lt: ObjectId(lastId.toString())
         };

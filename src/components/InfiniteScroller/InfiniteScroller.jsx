@@ -19,6 +19,10 @@ export class InfiniteScroller extends Component {
 
   componentDidMount() {
     document.body.addEventListener('scroll', this.handleScroll, { passive: true, capture: true });
+
+    if(this.container.scrollHeight === this.container.offsetHeight){
+      this.loadMore();
+    }
     const element = ReactDOM.findDOMNode(this);
     element.scrollTop = element.scrollHeight
   }
@@ -45,7 +49,10 @@ export class InfiniteScroller extends Component {
       const scrollHeight = this.container.scrollHeight;
       const clientHeight = this.container.clientHeight;
       if (!this.state.isLoading) {
-        if (scrollHeight <= scrollTop + clientHeight + 50 ) {
+        const loadMore = !this.props.reverse
+                   ? scrollHeight <= scrollTop + clientHeight + 50
+                   : scrollTop < 100;
+        if (loadMore) {
           this.loadMore();
         }
       }
@@ -72,9 +79,14 @@ export class InfiniteScroller extends Component {
   render() {
     return  (
       <div className={`infinite-scroller ${this.props.className || ''}`} ref={this.setRef}>
+        {
+          this.state.isLoading && this.props.reverse ?
+          <Loader />
+          : false
+        }
         {this.props.children}
         {
-          this.state.isLoading ?
+          this.state.isLoading && !this.props.reverse ?
           <Loader />
           : false
         }
