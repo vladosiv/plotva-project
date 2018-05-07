@@ -53,7 +53,7 @@ class ContactsComponent extends Component {
           {this.props.contacts.map((contact, index) => {
             const props = {};
             if (this.props.user) {
-              props.onClick = this.props.createChat ? () => this.props.addToChat(index) : this.getChatId(contact);
+              props.onClick = this.props.createChat ? () => this.props.addToChat(contact) : this.getChatId(contact);
             } else {
               props.link = `/chat/${contact._id}`;
             }

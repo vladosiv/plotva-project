@@ -7,7 +7,7 @@ import { HeaderBtn } from "../HeaderBtn/HeaderBtn";
 import { Avatar } from "../Avatar/Avatar";
 import './Header.css';
 import api from '../../api';
-import { setSelectedUsers, setUsers, deselectUsers } from '../../store/actions/userActions';
+import { deselectUsers } from '../../store/actions/userActions';
 
 
 import { connect } from 'react-redux';

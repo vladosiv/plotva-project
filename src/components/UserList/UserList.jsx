@@ -60,10 +60,10 @@ class UserListComponent extends PureComponent {
     }
   }
 
-  addToChat(index) {
+  addToChat(contact) {
     const users = [].concat(this.props.users);
     const selectedUsers = [].concat(this.props.selectedUsers);
-    const current = users[index];
+    const current = users.find(user => user._id === contact._id);
 
     if (!current.checked){
       selectedUsers.push(current);
