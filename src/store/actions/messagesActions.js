@@ -16,6 +16,14 @@ export const setNext = payload => ({
   payload,
 });
 
+const getMessages = (messages, currentUserId) => 
+  messages.map(message => ({
+    id: message._id,
+    text: message.message,
+    time: message.created_at,
+    isMy: currentUserId === message.userId,
+  }));
+
 export const fetchMessages = roomId => async (dispatch, getState) => {
   const room = getState().messages.rooms[roomId];
   const currentUserId = getState().user.user._id;
@@ -29,9 +37,8 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
       response = await api.getRoomMessages(roomId);
 
       const messages = getMessages(response.items, currentUserId);
-      const last = messages.length && messages.length - 1;
-      const lastMessage = messages[last] && messages[last].text;
-
+      const lastMessage = messages[0] && messages[0].text;
+      let lastCreatedAt = true;
       let recepient = await api.getUser(
         room.users.find(roomUserID => roomUserID !== currentUserId)
       );
@@ -44,7 +51,7 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
         lastMessage,
         messages,
         count: room.users.length,
-        next: response.next
+        next: {...response.next, lastCreatedAt}
       }));
 
     } else if (hasMessages && next) {
@@ -87,13 +94,7 @@ export const setChatName = query => ({
   payload: query,
 });
 
-const getMessages = (messages, currentUserId) => 
-  messages.map(message => ({
-    id: message._id,
-    text: message.message,
-    time: message.created_at,
-    isMy: currentUserId === message.userId,
-  }));
+
 
   
 

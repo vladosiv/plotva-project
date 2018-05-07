@@ -19,20 +19,20 @@ export class InfiniteScroller extends Component {
 
   componentDidMount() {
     document.body.addEventListener('scroll', this.handleScroll, { passive: true, capture: true });
-    // const element = ReactDOM.findDOMNode(this);
-    // element.scrollTop = element.scrollHeight
+    const element = ReactDOM.findDOMNode(this);
+    element.scrollTop = element.scrollHeight
   }
 
   componentWillUpdate() {
-    // const element = ReactDOM.findDOMNode(this);
-    // this.shouldScrollBottom = element.scrollTop + element.offsetHeight === element.scrollHeight;
+    const element = ReactDOM.findDOMNode(this);
+    this.shouldScrollBottom = element.scrollTop + element.offsetHeight === element.scrollHeight;
   }
    
   componentDidUpdate() {
-    //  if (this.state.isLoading) {
-    //    const element = ReactDOM.findDOMNode(this);
-    //    element.scrollTop = element.scrollHeight
-    //  }
+     if (this.shouldScrollBottom) {
+       const element = ReactDOM.findDOMNode(this);
+       element.scrollTop = element.scrollHeight
+     }
   }
 
   componentWillUnmount() {

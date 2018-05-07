@@ -1,4 +1,4 @@
-const {ObjectId} = require('mongodb');
+const {ObjectId, Timestamp} = require('mongodb');
 
 /**
  * @typedef {{
@@ -15,17 +15,21 @@ const {ObjectId} = require('mongodb');
  * @param {Collection} collection
  * @param filter
  */
-async function pageableCollection(collection, {lastId, order, limit = 10, ...query} = {}) {
+async function pageableCollection(collection, {lastId, lastCreatedAt, order, limit = 10, ...query} = {}) {
     let count = await collection.find(query).count();
 
-    if (lastId) {
+    if(lastCreatedAt) {
+        query._id = {
+            $lt: ObjectId(lastId.toString())
+        };
+    }
+    else if (lastId) {
         query._id = {
             $gt: ObjectId(lastId.toString())
         };
     }
 
     let queryBuilder = collection.find(query, {limit});
-
     if (order) {
         queryBuilder = queryBuilder.sort(order);
     }

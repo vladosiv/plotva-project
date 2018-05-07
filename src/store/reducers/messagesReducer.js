@@ -28,8 +28,7 @@ export const messagesReducer = (state = initialState, action) => {
             [action.payload.roomId]: {
               ...room,
               messages: [...room.messages, ...action.payload.messages],
-              next: action.payload.next,
-              lastMessage: action.payload.messages[action.payload.messages.length - 1].text
+              next: action.payload.next
             },
           }
         };

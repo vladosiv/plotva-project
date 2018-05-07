@@ -70,7 +70,6 @@ async function getMessages(db, filter) {
             filter[key] = ObjectId(filter[key].toString())
         }
     });
-    console.log(filter);
     return pageableCollection(db.collection(TABLE), filter);
 }
 

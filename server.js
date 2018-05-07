@@ -23,8 +23,6 @@ const DATABASE_CONFIG = {
     database: MONGO_DATABASE
 };
 
-console.log(DATABASE_CONFIG)
-
 /**
  * Socket.io server
  */

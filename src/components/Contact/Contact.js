@@ -50,7 +50,12 @@ export const Contact = props => {
           )}
         </div>
         <div className="content__body">
-          {content ? <div className={`content__text content__text_${contentType}`}>{content}</div> : false}
+          {content
+            ? <div className={`content__text content__text_${contentType}`}>
+                {content}
+              </div>
+            : false
+          }
           {count ? <div className="content__counter">{count}</div> : false}
         </div>
       </div>
