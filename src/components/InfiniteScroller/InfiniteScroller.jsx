@@ -46,10 +46,10 @@ export class InfiniteScroller extends Component {
       const scrollHeight = this.container.scrollHeight;
       const clientHeight = this.container.clientHeight;
       if (!this.state.isLoading) {
-        const loadMore = !this.props.reverse
+        const shouldLoadMore = !this.props.reverse
                    ? scrollHeight <= scrollTop + clientHeight + 50
                    : scrollTop < 100;
-        if (loadMore) {
+        if (shouldLoadMore) {
           this.loadMore();
         }
       }
