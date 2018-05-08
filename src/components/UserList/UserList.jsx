@@ -5,7 +5,7 @@ import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
 import { Contact } from '../Contact/Contact';
 import { SectionTitle } from '../SectionTitle/SectionTitle';
 
-import { setUsers, setNext, setSelectedUsers, deselectUsers } from '../../store/actions/userActions';
+import { addUsers, setNext, setSelectedUsers, deselectUsers } from '../../store/actions/userActions';
 import { Loader } from '../Loader/Loader';
 import { Error } from '../Error/Error';
 import { FETCH_CONTACTS_ERROR } from '../../errorCodes';
@@ -30,7 +30,9 @@ class UserListComponent extends PureComponent {
   }
 
   componentWillUnmount() {
-    this.props.dispatch(deselectUsers());   
+    if (this.props.selectedUsers.length) {
+      this.props.dispatch(deselectUsers());   
+    }
   }
 
   async fetchNext() {
@@ -40,20 +42,19 @@ class UserListComponent extends PureComponent {
     }
     try {
       let resp = await api.getUsers(next);
-      const users = this.props.users.concat(
-          resp.items.map(user => {
-            const status = user.online ? 'online' : 'offline';
-            return {
-              _id: user._id,
-              userName: user.name ? user.name : 'Anonymous',
-              avatar: user.img,
-              size: 'small',
-              content: status,
-              contentType: status,
-            };
-          }))
-          this.props.dispatch(setUsers(users));
-          this.props.dispatch(setNext(resp.next));
+      const users = resp.items.map(user => {
+        const status = user.online ? 'online' : 'offline';
+        return {
+          _id: user._id,
+          userName: user.name,
+          avatar: user.img,
+          size: 'small',
+          content: status,
+          contentType: status,
+        };
+      })
+      this.props.dispatch(addUsers(users));
+      this.props.dispatch(setNext(resp.next));
     } catch (err) {
       console.error(err);
       this.setState({ error: err });
@@ -61,8 +62,8 @@ class UserListComponent extends PureComponent {
   }
 
   addToChat(contact) {
-    const users = [].concat(this.props.users);
-    const selectedUsers = [].concat(this.props.selectedUsers);
+    const users = [...this.props.users];
+    const selectedUsers = [...this.props.selectedUsers];
     const current = users.find(user => user._id === contact._id);
 
     if (!current.checked){
@@ -76,7 +77,7 @@ class UserListComponent extends PureComponent {
     }
 
     current.checked = !current.checked;
-    this.props.dispatch(setUsers(users));
+    this.props.dispatch(addUsers(users));
   }
 
   render() {

@@ -59,7 +59,8 @@ export const messagesReducer = (state = initialState, action) => {
               ...room,
               messages: [...action.payload.messages, ...room.messages],
               next: action.payload.next,
-              lastMessage: action.payload.messages[0].text
+              lastMessage: action.payload.messages[0].text,
+              lastMessageTime: action.payload.messages[0].time
             },
           }
         };
@@ -72,6 +73,8 @@ export const messagesReducer = (state = initialState, action) => {
             ...room,
             messages: [...action.payload.messages],
             next: null,
+            lastMessage: action.payload.messages[0].text,
+            lastMessageTime: action.payload.messages[0].time
           },
         }
       };

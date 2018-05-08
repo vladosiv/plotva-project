@@ -10,7 +10,7 @@ export function Avatar(props) {
       { avatar
         ? <img className='avatar__img' src={avatar} alt='avatar' />
         : <div
-            style={{'backgroundColor': colors[color[color.length - 1]]}}className='avatar_default'
+            style={{'backgroundColor': colors[color[color.length - 1]]}} className='avatar_default'
           >
             {defaultName}
           </div>

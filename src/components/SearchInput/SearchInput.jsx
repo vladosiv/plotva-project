@@ -15,7 +15,9 @@ export const SearchInput = connect(stateToProps)(
     }
 
     componentWillUnmount() {
-      this.props.dispatch(setSearch(''));
+      if(this.props.current) {
+        this.props.dispatch(setSearch(''))
+      };
     }
 
     getSearchRequest(e) {

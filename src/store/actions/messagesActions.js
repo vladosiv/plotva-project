@@ -1,4 +1,5 @@
 import { MESSAGES_ACTION_TYPES } from './actionTypes';
+import { addUsers } from './userActions';
 import api from '../../api';
 
 export const setRoom = payload => ({
@@ -15,7 +16,6 @@ export const prependMessages = payload => ({
   type: MESSAGES_ACTION_TYPES.MESSAGES_PREPENDED,
   payload,
 });
-
 
 
 export const setNext = payload => ({
@@ -35,8 +35,10 @@ const getMessages = (messages, currentUserId) =>
 export const fetchMessages = roomId => async (dispatch, getState) => {
   const room = getState().messages.rooms[roomId];
   const currentUserId = getState().user.user._id;
+  const users = getState().user.users;
   const hasMessages = room && room.messages.length > 0;
   let next = (room && room.next) || null;
+  let response;  
 
   if(next) {
     next = {
@@ -45,38 +47,49 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
     }
   }
 
-  let response;
   try {
     if (!hasMessages) {
+      let roomName;
       const room = await api.getRoom(roomId);      
       response = await api.getRoomMessages(roomId);
 
-      const isChat = room.isChat;
       const messages = getMessages(response.items, currentUserId);
-      const lastMessage = messages[0] && messages[0].text;
-      const lastMessageTime = messages[0] && messages[0].time;
       
-      let recepient = await api.getUser(
-        room.users.find(roomUserID => roomUserID !== currentUserId)
-      );
-
-      const name = room.users.length > 2 ? room.name : recepient.name;
+      if (!room.isChat) {
+        let recepient = users.find(user => user._id === recepientId);
+        const recepientId = room.users.find(roomUserID => roomUserID !== currentUserId);
+        if(!recepient) {
+          recepient = await api.getUser(recepientId);
+          const status = recepient.online ? 'online' : 'offline';
+          dispatch(addUsers([{
+              _id: recepient._id,
+              userName: recepient.name,
+              avatar: recepient.img,
+              size: 'small',
+              content: status,
+              contentType: status,
+          }]));
+        }
+        roomName = recepient.name;
+      } else {
+        roomName = room.name;
+      }
       
       dispatch(setRoom({
         roomId,
-        name,
-        lastMessage,
-        lastMessageTime,
+        name: roomName,
+        lastMessage: messages[0].text,
+        lastMessageTime: messages[0].time,
         messages,
-        isChat,
+        isChat: room.isChat,
+        users: room.users,
         count: room.users.length,
         next: response.next
       }));
-
+      
     } else if (hasMessages && next) {
       response = await api.getMessages(next);
       const messages = getMessages(response.items, currentUserId);
-
       dispatch(appendMessages({ roomId, messages, next: response.next }));
     } else {
       return;

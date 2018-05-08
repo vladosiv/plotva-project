@@ -13,8 +13,8 @@ import { deselectUsers } from '../../store/actions/userActions';
 import { connect } from 'react-redux';
 
 class HeaderComponent extends Component {
-  
-   newChat = async () => {
+
+  newChat = async () => {
     const {user, selectedUsers} = this.props
     try {
       const rooms = await api.getRooms({ name: this.props.chatName });

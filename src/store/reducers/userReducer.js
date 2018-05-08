@@ -12,6 +12,11 @@ export const userReducer = (state = {users: [], selectedUsers: []}, action) => {
         ...state,
         users: action.users,
       };
+    case USER_ACTION_TYPES.ADD_USERS:
+      return {
+        ...state,
+        users: [...state.users, ...action.users],
+      };
     case USER_ACTION_TYPES.SET_NEXT:
       return {
         ...state,

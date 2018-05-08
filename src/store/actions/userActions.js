@@ -10,6 +10,11 @@ export const setUsers = users => ({
   users,
 });
 
+export const addUsers = users => ({
+  type: USER_ACTION_TYPES.ADD_USERS,
+  users,
+});
+
 export const setNext = next => ({
   type: USER_ACTION_TYPES.SET_NEXT,
   next,
