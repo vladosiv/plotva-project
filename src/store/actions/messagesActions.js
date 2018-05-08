@@ -51,8 +51,11 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
       const room = await api.getRoom(roomId);      
       response = await api.getRoomMessages(roomId);
 
+      const isChat = room.isChat;
       const messages = getMessages(response.items, currentUserId);
       const lastMessage = messages[0] && messages[0].text;
+      const lastMessageTime = messages[0] && messages[0].time;
+      
       let recepient = await api.getUser(
         room.users.find(roomUserID => roomUserID !== currentUserId)
       );
@@ -63,7 +66,9 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
         roomId,
         name,
         lastMessage,
+        lastMessageTime,
         messages,
+        isChat,
         count: room.users.length,
         next: response.next
       }));

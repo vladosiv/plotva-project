@@ -53,7 +53,7 @@ class ChatComponent extends PureComponent {
     }
 
     return (
-      <InfiniteScroller loadMore={this.fetchNext} next={room.next} reverse>
+      <InfiniteScroller fetching={room.fetching}loadMore={this.fetchNext} next={room.next} reverse>
         {
           room
           ? <MessagesList messages={room.messages} />

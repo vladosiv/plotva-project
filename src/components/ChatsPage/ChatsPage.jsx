@@ -8,8 +8,6 @@ import api from '../../api';
 import { connect } from 'react-redux';
 import { fetchMessages, setNext } from '../../store/actions/messagesActions';
 
-
-
 class ChatsPageComponent extends Component {
   constructor() {
     super();
@@ -54,7 +52,9 @@ class ChatsPageComponent extends Component {
       _id: rooms[key].roomId,
       userName: rooms[key].name,
       content: rooms[key].lastMessage || 'No messages',
-      userCount: rooms[key].count
+      userCount: rooms[key].count,
+      time: rooms[key].lastMessageTime,
+      group: rooms[key].isChat
     }))
 
     return (

@@ -30,7 +30,8 @@ class HeaderComponent extends Component {
 
   createRoomWithUsers = async (name, users) => {
     try {
-      const room = await api.createRoom({ name });
+      const isChat = true;
+      const room = await api.createRoom({ name, isChat });
       for (let i = 0; i < users.length; i++) {
         await api.userJoinRoom(users[i]._id, room._id)
       }

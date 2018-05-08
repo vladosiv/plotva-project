@@ -12,17 +12,13 @@ export class InfiniteScroller extends Component {
       isLoading: false,
     };
     this.container = null;
-    this.handleScroll = debounce(this.handleScroll.bind(this), 1000);
+    this.handleScroll = debounce(this.handleScroll.bind(this), 100);
     this.loadMore = this.loadMore.bind(this);
     this.setRef = this.setRef.bind(this);
   }
 
   componentDidMount() {
     document.body.addEventListener('scroll', this.handleScroll, { passive: true, capture: true });
-
-    if(this.container.scrollHeight === this.container.offsetHeight && this.props.next){
-      this.loadMore();
-    }
     const element = ReactDOM.findDOMNode(this);
     element.scrollTop = element.scrollHeight
   }
@@ -37,6 +33,7 @@ export class InfiniteScroller extends Component {
        const element = ReactDOM.findDOMNode(this);
        element.scrollTop = element.scrollHeight
      }
+     
   }
 
   componentWillUnmount() {
