@@ -47,17 +47,20 @@ class ContactsComponent extends Component {
   };
 
   render() {
+    const {contacts, search, addToChat, createChat, user} = this.props;
     return (
       <React.Fragment>
         <div className="contacts">
-          {this.props.contacts.map((contact, index) => {
+          {contacts.map((contact, index) => {
             const props = {};
-            if (this.props.user) {
-              props.onClick = this.props.createChat ? () => this.props.addToChat(contact) : this.getChatId(contact);
+            if (user) {
+              props.onClick = createChat
+                              ? () => addToChat(contact)
+                              : this.getChatId(contact);
             } else {
               props.link = `/chat/${contact._id}`;
             }
-            if (contact.userName.toLowerCase().indexOf(this.props.search) + 1 > 0) {
+            if (contact.userName.toLowerCase().indexOf(search.toLowerCase()) >= 0) {
               return <Contact key={index} color={`${index}`} {...props} {...contact} />;
             }
             return null;

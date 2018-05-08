@@ -11,21 +11,15 @@ export const SearchInput = connect(stateToProps)(
   class SearchInput extends React.Component {
     constructor(props) {
       super(props);
-
       this.getSearchRequest = this.getSearchRequest.bind(this);
     }
 
     componentWillUnmount() {
-      this.resetState();
+      this.props.dispatch(setSearch(''));
     }
 
-    getSearchRequest(event) {
-      const value = event.target.value;
-      return this.props.dispatch(setSearch(value));
-    }
-
-    resetState() {
-      return this.props.dispatch(setSearch(''));
+    getSearchRequest(e) {
+      this.props.dispatch(setSearch(e.target.value));
     }
 
     render() {

@@ -4,7 +4,7 @@ import { Icon } from '../Icon/Icon';
 import './InputGroup.css';
 
 export function InputGroup(props) {
-  const { name, label, type, value, onInputChange } = props;
+  const { name, label, type, value, required, onInputChange } = props;
   return (
     <label className={`input-wrapper input-wrapper_${type}`}>
       {type === 'file' ? <Icon type="file" /> : null} {label}
@@ -14,6 +14,7 @@ export function InputGroup(props) {
         type={type}
         name={name}
         defaultValue={value}
+        required={required}
       />
     </label>
   );
