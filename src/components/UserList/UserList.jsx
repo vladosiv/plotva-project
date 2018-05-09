@@ -42,18 +42,7 @@ class UserListComponent extends PureComponent {
     }
     try {
       let resp = await api.getUsers(next);
-      const users = resp.items.map(user => {
-        const status = user.online ? 'online' : 'offline';
-        return {
-          _id: user._id,
-          userName: user.name,
-          avatar: user.img,
-          size: 'small',
-          content: status,
-          contentType: status,
-        };
-      })
-      this.props.dispatch(addUsers(users));
+      this.props.dispatch(addUsers(resp.items));
       this.props.dispatch(setNext(resp.next));
     } catch (err) {
       console.error(err);
@@ -100,9 +89,9 @@ class UserListComponent extends PureComponent {
           ? false
           : (
             <Contact
-              userName={user.name}
+              name={user.name}
               content={user.phone}
-              avatar={user.img}
+              img={user.img}
               size="large"
               contentType="message"
               color="7"

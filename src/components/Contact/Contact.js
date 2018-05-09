@@ -15,8 +15,8 @@ const formatter = new Intl.DateTimeFormat('ru-RU', formatOptions)
 
 export const Contact = props => {
   const {
-    avatar,
-    userName,
+    img,
+    name,
     time,
     content,
     count,
@@ -31,8 +31,8 @@ export const Contact = props => {
   } = props;
 
   let defaultName = '';
-  if (userName) {
-    userName.split(' ').forEach(word => {
+  if (name) {
+    name.split(' ').forEach(word => {
       defaultName += word[0].toUpperCase();
     });
   }
@@ -47,7 +47,7 @@ export const Contact = props => {
 
   return (
     <div onClick={onClick} className={`contact contact_${size}`}>
-      <Avatar avatar={avatar} size={size} checked={checked} defaultName={defaultName} color={color} />
+      <Avatar img={img} size={size} checked={checked} defaultName={defaultName} color={color} />
       <div className="contact__content">
         <div className="content__header">
           <div className="content__name">
@@ -55,7 +55,7 @@ export const Contact = props => {
               ? <Icon type={'group'} />
               : false
             }
-            {userName}
+            {name}
           </div>
           {time ? (
             <div className="content__time">

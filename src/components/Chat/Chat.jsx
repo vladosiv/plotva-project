@@ -19,11 +19,18 @@ class ChatComponent extends PureComponent {
     this.fetchNext = this.fetchNext.bind(this);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const {rooms, match} = this.props;
     this.joinRoom();
-    await this.fetchNext((rooms && rooms[match.params.id] && rooms[match.params.id].next) || true);
-    this.getChatUsers();
+    this.fetchNext((rooms && rooms[match.params.id] && rooms[match.params.id].next) || true);
+  }
+
+  componentDidUpdate(){
+    const { rooms, match, users } = this.props;
+    const room = rooms && rooms[match.params.id];
+    if(room){
+      this.getChatUsers(room, users);    
+    }
   }
 
   async joinRoom() {
@@ -46,34 +53,33 @@ class ChatComponent extends PureComponent {
     }
   }
 
-  async getChatUsers() {
-    const { rooms, match, users } = this.props;
-    const room = rooms && rooms[match.params.id];
-    const chatUsers = await Promise.all(room.users.map(async id => {
+  async getChatUsers(room, users) {
+    const chatUsers = [];
+    room.users.forEach(async id => {
       if(!users.find(user => user._id === id)) {
-        let user = await api.getUser(id);
-        const status = user.online ? 'online' : 'offline';
-        return {
-            _id: user._id,
-            userName: user.name,
-            avatar: user.img,
-            size: 'small',
-            content: status,
-            contentType: status,
-        };
+        chatUsers.push(api.getUser(id));
       }
-    }));
-    await this.props.dispatch(addUsers(chatUsers));
+    });
+
+    let result = await Promise.all(chatUsers);
+
+    if(result.length) {
+      await this.props.dispatch(addUsers(result));
+    }
   }
 
   render() {
     const { error } = this.state;
-    const { rooms, match, users } = this.props;
+    const { rooms, match, users, user } = this.props;
     const room = rooms && rooms[match.params.id];
     if (!room && !error) {
       return <Loader />;
     }
-    const chatUsers = users.length && room.users.map(id => users.find(user => user._id === id));
+
+    let chatUsers = [];
+    if(users) {
+      chatUsers = [user, ...users].filter(user => room.users.includes(user._id));
+    }
 
     return (
       <InfiniteScroller loadMore={this.fetchNext} next={room.next} reverse>

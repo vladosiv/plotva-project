@@ -60,7 +60,7 @@ class ContactsComponent extends Component {
             } else {
               props.link = `/chat/${contact._id}`;
             }
-            if (contact.userName.toLowerCase().indexOf(search.toLowerCase()) >= 0) {
+            if (contact.name.toLowerCase().indexOf(search.toLowerCase()) >= 0) {
               return <Contact key={index} color={`${index}`} {...props} {...contact} />;
             }
             return null;

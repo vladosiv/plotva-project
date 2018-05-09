@@ -7,7 +7,12 @@ export const MessagesList = ({ messages, isChat, chatUsers }) => (
     {
       messages.map (
         message => {
-          const user = chatUsers && chatUsers.find(user => user._id === message.userId);
+          let user;
+          if (isChat && chatUsers.length) {
+            const currentUser = chatUsers.find(user => user._id === message.userId);
+            user = chatUsers && currentUser;
+            user.color = `${chatUsers.indexOf(currentUser)}`;
+          }
           return <Message key={message.id} {...message } user={user} isChat={isChat}/>
         }
       )

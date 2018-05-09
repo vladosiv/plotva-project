@@ -7,16 +7,25 @@ export const userReducer = (state = {users: [], selectedUsers: []}, action) => {
         ...state,
         user: action.user,
       };
-    case USER_ACTION_TYPES.SET_USERS:
+      
+    case USER_ACTION_TYPES.ADD_USERS: {
+      const newUsers = action.users.map(user => {
+        const status = user.online ? 'online' : 'offline';
+        return {
+            _id: user._id,
+            name: user.name,
+            img: user.img,
+            size: 'small',
+            content: status,
+            contentType: status,
+        };
+      })
       return {
         ...state,
-        users: action.users,
+        users: [...state.users, ...newUsers]
       };
-    case USER_ACTION_TYPES.ADD_USERS:
-      return {
-        ...state,
-        users: [...state.users, ...action.users],
-      };
+    }
+
     case USER_ACTION_TYPES.SET_NEXT:
       return {
         ...state,

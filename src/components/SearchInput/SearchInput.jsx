@@ -29,7 +29,7 @@ export const SearchInput = connect(stateToProps)(
         <input
           className="search"
           type="search"
-          placeholder="Search for contacts or usernames"
+          placeholder="Search for contacts or name"
           onChange={this.getSearchRequest}
         />
       );

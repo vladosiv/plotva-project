@@ -36,6 +36,7 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
   const room = getState().messages.rooms[roomId];
   const currentUserId = getState().user.user._id;
   const users = getState().user.users;
+
   const hasMessages = room && room.messages.length > 0;
   let next = (room && room.next) || null;
   let response;  
@@ -56,19 +57,11 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
       const messages = getMessages(response.items, currentUserId);
       
       if (!room.isChat) {
+        const recepientId = room.users.find(roomUserID => roomUserID !== currentUserId);        
         let recepient = users.find(user => user._id === recepientId);
-        const recepientId = room.users.find(roomUserID => roomUserID !== currentUserId);
         if(!recepient) {
           recepient = await api.getUser(recepientId);
-          const status = recepient.online ? 'online' : 'offline';
-          dispatch(addUsers([{
-              _id: recepient._id,
-              userName: recepient.name,
-              avatar: recepient.img,
-              size: 'small',
-              content: status,
-              contentType: status,
-          }]));
+          dispatch(addUsers([recepient]));
         }
         roomName = recepient.name;
       } else {
@@ -78,8 +71,8 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
       dispatch(setRoom({
         roomId,
         name: roomName,
-        lastMessage: messages[0].text,
-        lastMessageTime: messages[0].time,
+        lastMessage: (messages[0] && messages[0].text) || 'No messages',
+        lastMessageTime: (messages[0] && messages[0].time) || '',
         messages,
         isChat: room.isChat,
         users: room.users,
