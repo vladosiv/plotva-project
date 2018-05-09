@@ -1,16 +1,21 @@
 import React from 'react';
 import './Avatar.css';
-import {colors} from './DefaultColors.js'
+import {getColor} from './DefaultColors.js'
 
-export function Avatar(props) {
-    const { size = 'large', img, checked, defaultName, color = 0 } = props;
-
+export function Avatar ({ size = 'large', img, checked, name, color='0' }) {
+    let defaultName = '';
+    if (name) {
+      name.split(' ').forEach(word => {
+        defaultName += word[0].toUpperCase();
+      });
+    }
     return (
       <div className={`avatar avatar_${size} ${checked ? 'avatar_checked' : ''}`}>
       { img
         ? <img className='avatar__img' src={img} alt='avatar' />
         : <div
-            style={{'backgroundColor': colors[color[color.length - 1]]}} className='avatar_default'
+            style={{'backgroundColor': getColor(color)}}
+            className='avatar_default'
           >
             {defaultName}
           </div>

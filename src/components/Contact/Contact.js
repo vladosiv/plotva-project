@@ -30,13 +30,6 @@ export const Contact = props => {
     group
   } = props;
 
-  let defaultName = '';
-  if (name) {
-    name.split(' ').forEach(word => {
-      defaultName += word[0].toUpperCase();
-    });
-  }
-
   let date;
   let timeFormatted;
 
@@ -47,7 +40,7 @@ export const Contact = props => {
 
   return (
     <div onClick={onClick} className={`contact contact_${size}`}>
-      <Avatar img={img} size={size} checked={checked} defaultName={defaultName} color={color} />
+      <Avatar img={img} size={size} checked={checked} name={name} color={color} />
       <div className="contact__content">
         <div className="content__header">
           <div className="content__name">

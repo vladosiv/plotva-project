@@ -8,6 +8,22 @@
   padding: 0 6px 6px 56px;
 }
 
+.message-wrapper_chat {
+  padding: 0 56px 0 0;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.message-wrapper_chat .avatar {
+  position: absolute;
+  bottom: 0;
+}
+
+.message-wrapper_chat .message {
+  margin-left: 50px;
+  padding: 6px 45px 5px 8px;
+}
+
 .message {
   position: relative;
   display: inline-block;

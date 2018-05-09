@@ -23,14 +23,14 @@ class UserListComponent extends PureComponent {
     this.addToChat = this.addToChat.bind(this);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     if(!this.props.users.length){
       this.fetchNext();
     }
   }
 
   componentWillUnmount() {
-    if (this.props.selectedUsers.length) {
+    if (this.props.createChat && this.props.selectedUsers.length) {
       this.props.dispatch(deselectUsers());   
     }
   }
@@ -56,10 +56,11 @@ class UserListComponent extends PureComponent {
 
   render() {
     const { error } = this.state;
-    const { users, user, createChat, editChat, current } = this.props;
+    const { users, user, createChat, currentUserSearch } = this.props;
     if (!users.length && !error) {
       return <Loader />;
     }
+
     const newUsers = [...users];
     const currentUserIndex = users.indexOf(users.find(item => item._id === user._id));
 
@@ -70,10 +71,9 @@ class UserListComponent extends PureComponent {
     return (
       <React.Fragment>
         {
-          createChat || editChat
+          createChat
           ? false
-          : (
-            <Contact
+          : <Contact
               name={user.name}
               content={user.phone}
               img={user.img}
@@ -81,7 +81,6 @@ class UserListComponent extends PureComponent {
               contentType="message"
               color="7"
             />
-          )
         }
         <SectionTitle title="Contacts" />        
         <InfiniteScroller
@@ -93,7 +92,7 @@ class UserListComponent extends PureComponent {
             type="contactList"
             contacts={newUsers}
             user={user}
-            search={current}
+            search={currentUserSearch}
             addToChat={this.addToChat}
             createChat={createChat}
           />
@@ -109,7 +108,9 @@ const stateToProps = state => ({
   users: state.user.users,
   next: state.user.next,
   selectedUsers: state.user.selectedUsers,
-  current: state.search.currentUserSearch,
+  rooms: state.messages.rooms,
+  currentRoomId: state.messages.currentRoomId,
+  currentUserSearch: state.search.currentUserSearch,
 });
 
 export const UserList = connect(stateToProps)(UserListComponent);

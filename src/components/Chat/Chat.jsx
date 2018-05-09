@@ -21,14 +21,11 @@ class ChatComponent extends PureComponent {
   componentDidMount() {
     const {rooms, currentRoomId} = this.props;
     this.fetchNext((rooms && rooms[currentRoomId] && rooms[currentRoomId].next) || true);
+    this.getChatUsers();
   }
 
   componentDidUpdate(){
-    const { rooms, currentRoomId, users } = this.props;
-    const room = rooms && rooms[currentRoomId];
-    if (room) {
-      this.getChatUsers(room, users);    
-    }
+    this.getChatUsers();    
   }
 
   async fetchNext() {
@@ -41,18 +38,20 @@ class ChatComponent extends PureComponent {
     }
   }
 
-  async getChatUsers(room, users) {
-    const chatUsers = [];
-    room.users.forEach(async id => {
-      if(!users.find(user => user._id === id)) {
-        chatUsers.push(api.getUser(id));
+  async getChatUsers() {
+    const { rooms, currentRoomId, users } = this.props;
+    const room = rooms && rooms[currentRoomId];
+    if (room) {
+      const chatUsers = [];
+      room.users.forEach(async id => {
+        if(!users.find(user => user._id === id)) {
+          chatUsers.push(api.getUser(id));
+        }
+      });
+      let result = await Promise.all(chatUsers);
+      if(result.length) {
+        await this.props.dispatch(addUsers(result));
       }
-    });
-
-    let result = await Promise.all(chatUsers);
-
-    if(result.length) {
-      await this.props.dispatch(addUsers(result));
     }
   }
 

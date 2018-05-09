@@ -79,6 +79,7 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
         lastMessageTime: (messages[0] && messages[0].time) || '',
         messages,
         isChat: room.isChat,
+        admin: room.admin,
         users: room.users,
         count: room.users.length,
         next: response.next

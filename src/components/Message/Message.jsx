@@ -2,7 +2,7 @@ import React from "react";
 import "./message.css";
 import {Icon} from "../Icon/Icon";
 import {Avatar} from "../Avatar/Avatar";
-import {colors} from '../Avatar/DefaultColors.js'
+import {getColor} from "../Avatar/DefaultColors.js"
 
 const formatOptions = {
   hour: "numeric",
@@ -18,13 +18,13 @@ export const Message = ({ isMy, text, status = "sent", time, user, isChat }) => 
     <div className={`message-wrapper ${isMy && !isChat ? "message-wrapper_my" : ""} ${isChat ? "message-wrapper_chat" : ""}`}>
       {
           isChat
-          ? <Avatar {...user}/>
+          ? <Avatar {...user} size={"small"}/>
           : false
       }
       <div className={`message ${isMy && !isChat ? "message_my" : ""}`}>
         {
           isChat
-          ? <div style={{'color': colors[user.color[user.color.length - 1]]}}>{user.name}</div>
+          ? <div style={{"color": getColor(user.color)}}>{user.name}</div>
           : false
         }
         <div className="message__text">{text}</div>

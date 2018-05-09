@@ -3,6 +3,7 @@ import { Link, withRouter } from 'react-router-dom'
 import { Icon} from "../Icon/Icon";
 import { HeaderTitle } from "../HeaderTitle/HeaderTitle";
 import { HeaderBtn } from "../HeaderBtn/HeaderBtn";
+import { Avatar } from "../Avatar/Avatar";
 import './Header.css';
 import api from '../../api';
 import { deselectUsers } from '../../store/actions/userActions';
@@ -30,8 +31,7 @@ class HeaderComponent extends Component {
 
   createRoomWithUsers = async (name, users) => {
     try {
-      const isChat = true;
-      const room = await api.createRoom({ name, isChat });
+      const room = await api.createRoom({ name, isChat: true, admin: this.props.user._id });
       for (let i = 0; i < users.length; i++) {
         await api.userJoinRoom(users[i]._id, room._id)
       }
@@ -46,10 +46,10 @@ class HeaderComponent extends Component {
     let size = subtitle ? "lg" : "sm";
     let isChat;
     const room = rooms && rooms[currentRoomId];
-    if(type === "dialog" && room) {
+    if (type === "dialog" && room) {
       title = (room && room.name) || 'Loading...';
-      subtitle = (room && `${room.count} members`) || 'Loading...';
-      isChat = room.isChat;
+      isChat = room.isChat;      
+      subtitle = isChat ? ((room && `${room.count} members`) || 'Loading...') : undefined;
     }
     return (
 
@@ -82,7 +82,7 @@ class HeaderComponent extends Component {
           }
           {type === "chats"  && <Link to="/create_chat"><Icon type="header-write" /></Link>}
           {type === "search" && <Link to="/contacts"><Header type='action' txt="Cancel"/></Link>}
-          {type === "dialog" && isChat && <Link to="/edit_chat"><Icon type="header-write" /></Link>}
+          {type === "dialog" && isChat && <Link to="/edit_chat"><Avatar size="xsmall" name={room.name}/></Link>}
         </div>
       </div>
     );

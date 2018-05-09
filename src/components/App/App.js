@@ -6,11 +6,11 @@ import { Footer } from '../Footer/Footer';
 import { SearchInput } from '../SearchInput/SearchInput';
 import { ChatInput } from '../ChatInput/ChatInput';
 import { UserList } from '../UserList/UserList';
+import { ChatUserList } from '../ChatUserList/ChatUserList';
 import { ChatsPage } from '../ChatsPage/ChatsPage';
 import { Chat } from '../Chat/Chat';
 import { ChatForm } from '../ChatForm/ChatForm';
 import { ProfilePage } from '../ProfilePage/ProfilePage';
-import { Init } from '../Init/Init';
 import { Login } from '../Login/Login';
 
 const ContactsPage = () => (
@@ -62,13 +62,13 @@ const CreateChatPage = () => (
     footer={<Footer path="Chats" />}
   />
 );
+
 const EditChatPage = () => (
   <Layout
-    header={<Header type="contacts" title="Contacts" subtitle="" createChat />}
+    header={<Header type="contacts" title="Contacts" subtitle="" />}
     content={
       <React.Fragment>
-        <ChatInput />
-        <UserList editChat />
+        <ChatUserList />
       </React.Fragment>
     }
     footer={<Footer path="Chats" />}

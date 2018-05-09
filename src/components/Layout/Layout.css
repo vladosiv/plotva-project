@@ -34,6 +34,10 @@ body,
   flex: 0 1 100%;
 }
 
+.layout__content h3 {
+  margin: 0 8px;
+}
+
 .layout__content a,
 .layout__footer a {
   text-decoration: none;
