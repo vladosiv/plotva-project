@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Contact } from '../Contact/Contact';
 import api from '../../api';
+import { connect } from 'react-redux';
+import { setCurrentRoom } from '../../store/actions/messagesActions';
+
 
 import './Contacts.css';
 
@@ -21,7 +24,8 @@ class ContactsComponent extends Component {
       if (!rooms.count) {
         this.createRoomWithUser(roomMembers, contact._id);
       } else {
-        this.props.history.push(`/chat/${rooms.items[0]._id}`);
+        this.props.dispatch(setCurrentRoom(rooms.items[0]._id));
+        this.props.history.push(`/chat`);
       }
     } catch (err) {
       this.setState({ error: 'Произошла ошибка.' });
@@ -31,8 +35,9 @@ class ContactsComponent extends Component {
   createRoomWithUser = async (name, userId) => {
     try {
       const room = await api.createRoom({ name });
-      await this.joinUserToRoom(userId, room._id);      
-      this.props.history.push(`/chat/${room._id}`);
+      await this.joinUserToRoom(userId, room._id);
+      this.props.dispatch(setCurrentRoom(room._id));            
+      this.props.history.push(`/chat`);
     } catch (err) {
       this.setState({ error: 'Произошла при создании комнаты.' });
     }
@@ -58,7 +63,8 @@ class ContactsComponent extends Component {
                               ? () => addToChat(contact)
                               : this.getChatId(contact);
             } else {
-              props.link = `/chat/${contact._id}`;
+              props.onClick = () => this.props.dispatch(setCurrentRoom(contact._id));            
+              props.link = `/chat`;
             }
             if (contact.name.toLowerCase().indexOf(search.toLowerCase()) >= 0) {
               return <Contact key={index} color={`${index}`} {...props} {...contact} />;
@@ -72,5 +78,6 @@ class ContactsComponent extends Component {
   }
 }
 
-const Contacts = withRouter(ContactsComponent);
-export { Contacts };
+const stateToProps = state => ({});
+
+export const Contacts = withRouter(connect(stateToProps)(ContactsComponent));

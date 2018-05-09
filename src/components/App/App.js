@@ -62,6 +62,18 @@ const CreateChatPage = () => (
     footer={<Footer path="Chats" />}
   />
 );
+const EditChatPage = () => (
+  <Layout
+    header={<Header type="contacts" title="Contacts" subtitle="" createChat />}
+    content={
+      <React.Fragment>
+        <ChatInput />
+        <UserList editChat />
+      </React.Fragment>
+    }
+    footer={<Footer path="Chats" />}
+  />
+);
 
 
 export class App extends Component {
@@ -71,11 +83,10 @@ export class App extends Component {
         <Route exact path="/" component={Login} />
         <Route exact path="/chats" component={ChatView} />
         <Route exact path="/contacts" component={ContactsPage} />
-        <Route exact path="/chat/:id" component={DialogPage} />
-        <Route exact path="/init/create/:name" component={Init} />
-        <Route exact path="/init/join/:roomId" component={Init} />
+        <Route exact path="/chat" component={DialogPage} />
         <Route exact path="/profile" component={ProfileView} />
         <Route exact path="/create_chat" component={CreateChatPage} />
+        <Route exact path="/edit_chat" component={EditChatPage} />
       </Switch>
     );
   }

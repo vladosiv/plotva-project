@@ -81,12 +81,18 @@ export const messagesReducer = (state = initialState, action) => {
     }
 
     case MESSAGES_ACTION_TYPES.MESSAGES_SET_NEXT:
+    return {
+      ...state,
+      next: action.payload
+    } 
+
+    case MESSAGES_ACTION_TYPES.MESSAGES_SET_CURRENT_ROOM:
       return {
         ...state,
-        next: action.payload
+        currentRoomId: action.payload
       } 
 
-    case MESSAGES_ACTION_TYPES.SET_CHAT_NAME:
+    case MESSAGES_ACTION_TYPES.MESSAGES_SET_CHAT_NAME:
       return {
         ...state,
         currentChatName: action.payload,

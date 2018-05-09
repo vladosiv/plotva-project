@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
 import { MessagesList } from '../MessagesList/MessagesList';
@@ -20,32 +19,21 @@ class ChatComponent extends PureComponent {
   }
 
   componentDidMount() {
-    const {rooms, match} = this.props;
-    this.joinRoom();
-    this.fetchNext((rooms && rooms[match.params.id] && rooms[match.params.id].next) || true);
+    const {rooms, currentRoomId} = this.props;
+    this.fetchNext((rooms && rooms[currentRoomId] && rooms[currentRoomId].next) || true);
   }
 
   componentDidUpdate(){
-    const { rooms, match, users } = this.props;
-    const room = rooms && rooms[match.params.id];
-    if(room){
+    const { rooms, currentRoomId, users } = this.props;
+    const room = rooms && rooms[currentRoomId];
+    if (room) {
       this.getChatUsers(room, users);    
-    }
-  }
-
-  async joinRoom() {
-    try {
-      await api.currentUserJoinRoom(this.props.match.params.id);
-    } catch (error) {
-      this.setState({
-        error,
-      });
     }
   }
 
   async fetchNext() {
     try {
-      await this.props.dispatch(fetchMessages(this.props.match.params.id));
+      await this.props.dispatch(fetchMessages(this.props.currentRoomId));
     } catch (error) {
       this.setState({
         error,
@@ -70,9 +58,13 @@ class ChatComponent extends PureComponent {
 
   render() {
     const { error } = this.state;
-    const { rooms, match, users, user } = this.props;
-    const room = rooms && rooms[match.params.id];
-    if (!room && !error) {
+    if (error) {
+      return <Error code={FETCH_MESSAGES_ERROR} />
+    };
+
+    const { rooms, currentRoomId, users, user } = this.props;
+    const room = rooms && rooms[currentRoomId];
+    if (!room) {
       return <Loader />;
     }
 
@@ -83,12 +75,7 @@ class ChatComponent extends PureComponent {
 
     return (
       <InfiniteScroller loadMore={this.fetchNext} next={room.next} reverse>
-        {
-          room
-          ? <MessagesList messages={room.messages} chatUsers={chatUsers} isChat={room.isChat}/>
-          : false
-        }
-        {error ? <Error code={FETCH_MESSAGES_ERROR} /> : null}
+        <MessagesList messages={room.messages} chatUsers={chatUsers} isChat={room.isChat}/>
       </InfiniteScroller>
     );
   }
@@ -98,6 +85,7 @@ const stateToProps = state => ({
   user: state.user.user,
   users: state.user.users,
   rooms: state.messages.rooms,
+  currentRoomId: state.messages.currentRoomId  
 });
 
-export const Chat = withRouter(connect(stateToProps)(ChatComponent));
+export const Chat = connect(stateToProps)(ChatComponent);

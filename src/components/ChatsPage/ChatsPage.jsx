@@ -34,11 +34,22 @@ class ChatsPageComponent extends Component {
     const res = await api.getCurrentUserRooms(next);
     await Promise.all(
       res.items.map(async room => {
-        await this.props.dispatch(fetchMessages(room._id));        
+        await this.props.dispatch(fetchMessages(room._id));    
+        await this.joinRoom(room._id);
       }),
     );
     await this.props.dispatch(setNext(res.next))
     return res;
+  }
+
+  async joinRoom(roomId) {
+    try {
+      await api.currentUserJoinRoom(roomId);
+    } catch (error) {
+      this.setState({
+        error,
+      });
+    }
   }
 
   render() {
@@ -51,11 +62,11 @@ class ChatsPageComponent extends Component {
     const chats = Object.keys(rooms).map(key => ({
       _id: rooms[key].roomId,
       name: rooms[key].name,
-      content: rooms[key].lastMessage || 'No messages',
+      content: rooms[key].lastMessage,
       userCount: rooms[key].count,
       time: rooms[key].lastMessageTime,
       group: rooms[key].isChat
-    }))
+    })).sort((a, b) => a.time < b.time);
 
     return (
       <InfiniteScroller next={this.props.next} loadMore={this.fetchNext}>
@@ -70,7 +81,7 @@ const stateToProps = state => ({
   rooms: state.messages.rooms,
   next: state.messages.next,
   users: state.user.users,
-  user: state.user.user,
+  user: state.user.user
 });
 
 export const ChatsPage = connect(stateToProps)(ChatsPageComponent);

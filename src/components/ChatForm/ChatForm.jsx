@@ -17,7 +17,7 @@ class ChatFormComponent extends PureComponent {
   handleSubmit(e) {
     e.preventDefault();
     if(this.state.messageText){
-      this.props.sendMessage(this.props.match.params.id, this.state.messageText);
+      this.props.sendMessage(this.state.messageText);
       this.setState({
         messageText: '',
       });

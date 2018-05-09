@@ -5,7 +5,7 @@ import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
 import { Contact } from '../Contact/Contact';
 import { SectionTitle } from '../SectionTitle/SectionTitle';
 
-import { addUsers, setNext, setSelectedUsers, deselectUsers } from '../../store/actions/userActions';
+import { addUsers, setNext, toggleUser, deselectUsers } from '../../store/actions/userActions';
 import { Loader } from '../Loader/Loader';
 import { Error } from '../Error/Error';
 import { FETCH_CONTACTS_ERROR } from '../../errorCodes';
@@ -51,31 +51,16 @@ class UserListComponent extends PureComponent {
   }
 
   addToChat(contact) {
-    const users = [...this.props.users];
-    const selectedUsers = [...this.props.selectedUsers];
-    const current = users.find(user => user._id === contact._id);
-
-    if (!current.checked){
-      selectedUsers.push(current);
-      this.props.dispatch(setSelectedUsers(selectedUsers))
-    } else {
-      let user = selectedUsers.find(user => user._id === current._id);
-      let deleteIndex = selectedUsers.indexOf(user);
-      selectedUsers.splice(deleteIndex, 1);
-      this.props.dispatch(setSelectedUsers(selectedUsers));
-    }
-
-    current.checked = !current.checked;
-    this.props.dispatch(addUsers(users));
+    this.props.dispatch(toggleUser(contact));
   }
 
   render() {
     const { error } = this.state;
-    const { users, user, createChat, current } = this.props;
+    const { users, user, createChat, editChat, current } = this.props;
     if (!users.length && !error) {
       return <Loader />;
     }
-    const newUsers = [...users]
+    const newUsers = [...users];
     const currentUserIndex = users.indexOf(users.find(item => item._id === user._id));
 
     if (currentUserIndex > -1) {
@@ -85,7 +70,7 @@ class UserListComponent extends PureComponent {
     return (
       <React.Fragment>
         {
-          createChat
+          createChat || editChat
           ? false
           : (
             <Contact

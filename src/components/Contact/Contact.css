@@ -78,6 +78,7 @@
 
 .content__text_message {
   max-height: 32px;
+  max-width: 80%;
 }
 
 .content__text_online {

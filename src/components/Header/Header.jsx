@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom'
 import { Icon} from "../Icon/Icon";
-import { SearchInput } from "../SearchInput/SearchInput";
 import { HeaderTitle } from "../HeaderTitle/HeaderTitle";
 import { HeaderBtn } from "../HeaderBtn/HeaderBtn";
-import { Avatar } from "../Avatar/Avatar";
 import './Header.css';
 import api from '../../api';
 import { deselectUsers } from '../../store/actions/userActions';
+import { setCurrentRoom } from '../../store/actions/messagesActions';
 
 
 import { connect } from 'react-redux';
@@ -21,7 +20,8 @@ class HeaderComponent extends Component {
       if (!rooms.count) {
         const room = await this.createRoomWithUsers(this.props.chatName, [user, ...selectedUsers]);
         this.props.dispatch(deselectUsers());
-        this.props.history.push(`/chat/${room._id}`);
+        this.props.dispatch(setCurrentRoom(room._id)); 
+        this.props.history.push(`/chat`);
       }
     } catch (err) {
       this.setState({ error: 'Произошла ошибка.' });
@@ -42,26 +42,31 @@ class HeaderComponent extends Component {
   };
   
   render() {
-    let {title, subtitle, type = "chats", rooms, match} = this.props;
+    let {title, subtitle, type = "chats", rooms, currentRoomId} = this.props;
     let size = subtitle ? "lg" : "sm";
-    const room = rooms && rooms[match.params.id];
+    let isChat;
+    const room = rooms && rooms[currentRoomId];
     if(type === "dialog" && room) {
       title = (room && room.name) || 'Loading...';
       subtitle = (room && `${room.count} members`) || 'Loading...';
+      isChat = room.isChat;
     }
     return (
 
       <div className={`header header_${size}`}>
         <div className="header__left">
-          {type === "search" && <SearchInput />}
-          {type === "dialog" && <HeaderBtn onClick={this.props.history.goBack} type="back" txt="Back" />}
+          {
+            (type === "dialog" ||
+            (type === "contacts" && this.props.createChat))
+            &&
+            <HeaderBtn onClick={this.props.history.goBack} type="back" txt="Back" />}
         </div>
-
         {title && (
           <div className="header__center">
             <HeaderTitle
               title={title}
               subtitle={subtitle}
+              isChat={isChat}
             />
           </div>
         )}
@@ -77,7 +82,7 @@ class HeaderComponent extends Component {
           }
           {type === "chats"  && <Link to="/create_chat"><Icon type="header-write" /></Link>}
           {type === "search" && <Link to="/contacts"><Header type='action' txt="Cancel"/></Link>}
-          {type === "dialog" && <Avatar size="xsmall" />}
+          {type === "dialog" && isChat && <Link to="/edit_chat"><Icon type="header-write" /></Link>}
         </div>
       </div>
     );
@@ -89,7 +94,8 @@ const stateToProps = state => ({
   chatName: state.messages.currentChatName,
   user: state.user.user,
   users: state.user.users,
-  rooms: state.messages.rooms
+  rooms: state.messages.rooms,
+  currentRoomId: state.messages.currentRoomId  
 });
 
 export const Header = connect(stateToProps)(withRouter(HeaderComponent));

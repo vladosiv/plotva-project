@@ -10,6 +10,11 @@ export const setUsers = users => ({
   users,
 });
 
+export const toggleUser = user => ({
+  type: USER_ACTION_TYPES.TOGGLE_USER,
+  user,
+});
+
 export const addUsers = users => ({
   type: USER_ACTION_TYPES.ADD_USERS,
   users,

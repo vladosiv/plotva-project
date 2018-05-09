@@ -17,9 +17,13 @@ export const prependMessages = payload => ({
   payload,
 });
 
-
 export const setNext = payload => ({
   type: MESSAGES_ACTION_TYPES.MESSAGES_SET_NEXT,
+  payload,
+});
+
+export const setCurrentRoom = payload => ({
+  type: MESSAGES_ACTION_TYPES.MESSAGES_SET_CURRENT_ROOM,
   payload,
 });
 
@@ -94,9 +98,10 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
   }
 };
 
-export const sendMessage = (roomId, messageText) => async (dispatch, getState) => {
+export const sendMessage = (messageText) => async (dispatch, getState) => {
   try {
     const currentUserId = getState().user.user._id;
+    const roomId = getState().messages.currentRoomId;
     const response = await api.sendMessage(roomId, messageText);
     const message = getMessages([response], currentUserId);
     dispatch(prependMessages({ roomId, messages: message }));
@@ -107,7 +112,7 @@ export const sendMessage = (roomId, messageText) => async (dispatch, getState) =
 };
 
 export const setChatName = query => ({
-  type: MESSAGES_ACTION_TYPES.SET_CHAT_NAME,
+  type: MESSAGES_ACTION_TYPES.MESSAGES_SET_CHAT_NAME,
   payload: query,
 });
 
