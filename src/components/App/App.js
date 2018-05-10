@@ -65,17 +65,15 @@ const CreateChatPage = () => (
 
 const AddToChatPage = () => (
   <Layout
-    header={<Header type="contacts" title="Contacts" subtitle="" withToggle toggleAction="addToChat"/>}
-    content={
-      <UserList withToggle />
-    }
+    header={<Header type="edit_chat" withToggle toggleAction="addToChat"/>}
+    content={<UserList withToggle edit/>}
     footer={<Footer path="Chats" />}
   />
 );
 
 const EditChatPage = () => (
   <Layout
-    header={<Header type="contacts" title="Contacts" subtitle="" withToggle toggleAction="goToEdit"/>}
+    header={<Header type="edit_chat" withToggle toggleAction="goToEdit"/>}
     content={<ChatUserList />}
     footer={<Footer path="Chats" />}
   />
@@ -91,6 +89,7 @@ export class App extends Component {
         <Route exact path="/profile" component={ProfileView} />
         
         <Route exact path="/chat" component={DialogPage} />
+
         <Route exact path="/create_chat" component={CreateChatPage} />
         <Route exact path="/edit_chat" component={EditChatPage} />
         <Route exact path="/add_to_chat" component={AddToChatPage} />

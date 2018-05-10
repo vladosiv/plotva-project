@@ -63,15 +63,12 @@ export class InfiniteScroller extends Component {
   }
 
   loadMore() {
-    this.setState({
-      isLoading: true,
-    });
-
+    this.setState({isLoading: true});
     this.props
       .loadMore()
       .catch(error => console.log('Error', error))
       .finally(() => {
-        this.setState({ isLoading: false });
+        this.setState({isLoading: false});
       });
   }
 
@@ -83,14 +80,14 @@ export class InfiniteScroller extends Component {
     return  (
       <div className={`infinite-scroller ${this.props.className || ''}`} ref={this.setRef}>
         {
-          this.state.isLoading && this.props.reverse ?
-          <Loader />
+          this.state.isLoading && this.props.reverse
+          ? <Loader />
           : false
         }
         {this.props.children}
         {
-          this.state.isLoading && !this.props.reverse ?
-          <Loader />
+          this.state.isLoading && !this.props.reverse
+          ? <Loader />
           : false
         }
       </div>

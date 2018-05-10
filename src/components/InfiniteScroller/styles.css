@@ -19,5 +19,8 @@
 
 .infinite-scroller_chat-create {
   height: calc(100% - 70px);
-  
+}
+
+.infinite-scroller_chat-members {
+  height: calc(100% - 28px);
 }

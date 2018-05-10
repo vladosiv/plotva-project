@@ -20,7 +20,6 @@ class ChatComponent extends PureComponent {
   }
 
   componentDidMount() {
-    this.fetchNext();
     this.getChatUsers();
   }
 
@@ -66,6 +65,7 @@ class ChatComponent extends PureComponent {
     const { rooms, currentRoomId, users, user } = this.props;
     const room = rooms && rooms[currentRoomId];
     if (!room) {
+      this.fetchNext();
       return <Loader />;
     }
 
@@ -86,7 +86,8 @@ const stateToProps = state => ({
   user: state.user.user,
   users: state.user.users,
   rooms: state.messages.rooms,
-  currentRoomId: state.messages.currentRoomId  
+  currentRoomId: state.messages.currentRoomId,  
+  editRoomId: state.messages.editRoomId,  
 });
 
 export const Chat = connect(stateToProps)(ChatComponent);

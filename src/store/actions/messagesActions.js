@@ -46,6 +46,15 @@ const getMessages = (messages, currentUserId) =>
     isMy: currentUserId === message.userId,
   }));
 
+export const joinUserToRoom = (userId, roomId) => async (dispatch, getState) => {
+  const room = getState().messages.rooms[roomId];
+  if (!room) {
+    dispatch(fetchMessages(roomId));
+  } else {
+    dispatch(addUserToRoom({userId, roomId}));    
+  }
+}
+
 export const fetchMessages = roomId => async (dispatch, getState) => {
   const room = getState().messages.rooms[roomId];
   const currentUserId = getState().user.user._id;

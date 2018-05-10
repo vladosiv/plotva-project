@@ -53,7 +53,7 @@ class UserListComponent extends PureComponent {
 
   render() {
     const { error } = this.state;
-    const { users, user, withToggle, rooms, currentUserSearch, editRoomId } = this.props;
+    const { users, user, withToggle, rooms, currentUserSearch, edit, currentRoomId } = this.props;
     if (!users.length && !error) {
       return <Loader />;
     }
@@ -65,8 +65,8 @@ class UserListComponent extends PureComponent {
       newUsers.splice(currentUserIndex, 1)
     }
 
-    if (editRoomId) {
-      const roomUsers = rooms[editRoomId].users;
+    if (edit) {
+      const roomUsers = rooms[currentRoomId].users;
       newUsers = newUsers.filter(user => !roomUsers.includes(user._id));
     }
 
@@ -112,7 +112,6 @@ const stateToProps = state => ({
   selectedUsers: state.user.selectedUsers,
   rooms: state.messages.rooms,
   currentRoomId: state.messages.currentRoomId,
-  editRoomId: state.messages.editRoomId,
   currentUserSearch: state.search.currentUserSearch,
 });
 

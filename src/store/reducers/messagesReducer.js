@@ -81,8 +81,9 @@ export const messagesReducer = (state = initialState, action) => {
     }
 
     case MESSAGES_ACTION_TYPES.MESSAGES_ADD_USER_TO_ROOM: {
+      const {userId, roomId} = action.payload;
       const rooms = state.rooms;
-      const room = rooms[action.payload.roomId];
+      const room = rooms[roomId];
       if (room) {
         return {
           ...state,
@@ -90,7 +91,7 @@ export const messagesReducer = (state = initialState, action) => {
             ...rooms,
             [room.roomId]: {
               ...room,
-              users: [...room.users, action.payload._id],
+              users: [...room.users, userId],
               count: room.count++
             },
           }

@@ -7,7 +7,7 @@ import { Avatar } from "../Avatar/Avatar";
 import './Header.css';
 import api from '../../api';
 import { deselectUsers } from '../../store/actions/userActions';
-import { setCurrentRoom, setEditRoom, addUserToRoom } from '../../store/actions/messagesActions';
+import { setCurrentRoom, setEditRoom } from '../../store/actions/messagesActions';
 
 
 import { connect } from 'react-redux';
@@ -15,7 +15,6 @@ import { connect } from 'react-redux';
 class HeaderComponent extends Component {
 
   goToEdit = async () => {
-    this.props.dispatch(setEditRoom(this.props.currentRoomId));
     this.props.history.push(`/add_to_chat`);
   }
 
@@ -24,9 +23,6 @@ class HeaderComponent extends Component {
     const room = rooms && rooms[currentRoomId];
     for (let i = 0; i < selectedUsers.length; i++) {
       await api.userJoinRoom(selectedUsers[i]._id, room.roomId)
-      await this.props.dispatch(
-        addUserToRoom({_id: selectedUsers[i]._id, roomId: room.roomId})
-      ); 
     }
     this.props.dispatch(setEditRoom('')); 
     this.props.history.push(`/chat`);
@@ -64,22 +60,28 @@ class HeaderComponent extends Component {
     let size = subtitle ? "lg" : "sm";
     let isChat;
     const room = rooms && rooms[currentRoomId];
-    if (type === "dialog" && room) {
+
+    if ((type === "dialog" || type === "edit_chat") && room) {
       title = (room && room.name) || 'Loading...';
       isChat = room.isChat;      
       subtitle = isChat ? ((room && `${room.count} members`) || 'Loading...') : undefined;
     }
-    return (
 
+    return (
       <div className={`header header_${size}`}>
         <div className="header__left">
           {
-            (type === "dialog" ||
-            (type === "contacts" && withToggle))
+            (
+              type === "dialog" ||
+              type === "edit_chat" ||
+              (type === "contacts" && withToggle)
+            )
             &&
-            <HeaderBtn onClick={history.goBack} type="back" txt="Back" />}
+            <HeaderBtn onClick={history.goBack} type="back" txt="Back" />
+          }
         </div>
-        {title && (
+        {
+          title && 
           <div className="header__center">
             <HeaderTitle
               title={title}
@@ -87,18 +89,11 @@ class HeaderComponent extends Component {
               isChat={isChat}
             />
           </div>
-        )}
-
+        }
         <div className="header__right">
           {
-            type === "contacts" &&
-            (
-              withToggle
-              ? <Icon type="header-add"
-                  onClick = {this[toggleAction]}
-                />
-              : false
-            )
+            (type === "contacts" || type === "edit_chat") && withToggle &&
+            <Icon type="header-add" onClick = {this[toggleAction]}/>
           }
           {type === "chats"  && <Link to="/create_chat"><Icon type="header-write" /></Link>}
           {type === "search" && <Link to="/contacts"><Header type='action' txt="Cancel"/></Link>}

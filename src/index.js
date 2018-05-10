@@ -10,7 +10,7 @@ import api from './api';
 
 import './index.css';
 
-import { registerSocketEventListeners } from './registerSocketEventListeners';
+import { onMessageListener, onJoinRoomListener } from './registerSocketEventListeners';
 // import registerServiceWorker from './registerServiceWorker';
 import regSw from './reg-sw';
 
@@ -103,7 +103,8 @@ import regSw from './reg-sw';
     store.dispatch(setUser(user));
   }
 
-  registerSocketEventListeners(store);
+  onMessageListener(store);
+  onJoinRoomListener(store);
 
   ReactDOM.render(
     <BrowserRouter>
