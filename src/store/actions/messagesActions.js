@@ -27,6 +27,16 @@ export const setCurrentRoom = payload => ({
   payload,
 });
 
+export const setEditRoom = payload => ({
+  type: MESSAGES_ACTION_TYPES.MESSAGES_SET_EDIT_ROOM,
+  payload,
+});
+
+export const addUserToRoom = payload => ({
+  type: MESSAGES_ACTION_TYPES.MESSAGES_ADD_USER_TO_ROOM,
+  payload,
+});
+
 const getMessages = (messages, currentUserId) => 
   messages.map(message => ({
     id: message._id,
@@ -41,8 +51,9 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
   const currentUserId = getState().user.user._id;
   const users = getState().user.users;
 
+  let next = room ? room.next : true;
   const hasMessages = room && room.messages.length > 0;
-  let next = (room && room.next) || null;
+  
   let response;  
 
   if(next) {
@@ -53,13 +64,11 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
   }
 
   try {
-    if (!hasMessages) {
+    if (!hasMessages && next) {
       let roomName;
       const room = await api.getRoom(roomId);      
       response = await api.getRoomMessages(roomId);
-
       const messages = getMessages(response.items, currentUserId);
-      
       if (!room.isChat) {
         const recepientId = room.users.find(roomUserID => roomUserID !== currentUserId);        
         let recepient = users.find(user => user._id === recepientId);

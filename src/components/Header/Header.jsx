@@ -7,12 +7,30 @@ import { Avatar } from "../Avatar/Avatar";
 import './Header.css';
 import api from '../../api';
 import { deselectUsers } from '../../store/actions/userActions';
-import { setCurrentRoom } from '../../store/actions/messagesActions';
+import { setCurrentRoom, setEditRoom, addUserToRoom } from '../../store/actions/messagesActions';
 
 
 import { connect } from 'react-redux';
 
 class HeaderComponent extends Component {
+
+  goToEdit = async () => {
+    this.props.dispatch(setEditRoom(this.props.currentRoomId));
+    this.props.history.push(`/add_to_chat`);
+  }
+
+  addToChat = async () => {
+    const {selectedUsers, rooms, currentRoomId} = this.props;
+    const room = rooms && rooms[currentRoomId];
+    for (let i = 0; i < selectedUsers.length; i++) {
+      await api.userJoinRoom(selectedUsers[i]._id, room.roomId)
+      await this.props.dispatch(
+        addUserToRoom({_id: selectedUsers[i]._id, roomId: room.roomId})
+      ); 
+    }
+    this.props.dispatch(setEditRoom('')); 
+    this.props.history.push(`/chat`);
+  }
 
   newChat = async () => {
     const {user, selectedUsers} = this.props
@@ -42,7 +60,7 @@ class HeaderComponent extends Component {
   };
   
   render() {
-    let {title, subtitle, type = "chats", rooms, currentRoomId} = this.props;
+    let {title, subtitle, type = "chats", rooms, currentRoomId, withToggle, history, toggleAction} = this.props;
     let size = subtitle ? "lg" : "sm";
     let isChat;
     const room = rooms && rooms[currentRoomId];
@@ -57,9 +75,9 @@ class HeaderComponent extends Component {
         <div className="header__left">
           {
             (type === "dialog" ||
-            (type === "contacts" && this.props.createChat))
+            (type === "contacts" && withToggle))
             &&
-            <HeaderBtn onClick={this.props.history.goBack} type="back" txt="Back" />}
+            <HeaderBtn onClick={history.goBack} type="back" txt="Back" />}
         </div>
         {title && (
           <div className="header__center">
@@ -75,8 +93,10 @@ class HeaderComponent extends Component {
           {
             type === "contacts" &&
             (
-              this.props.createChat
-              ? <Icon type="header-add" onClick = {this.newChat}/>
+              withToggle
+              ? <Icon type="header-add"
+                  onClick = {this[toggleAction]}
+                />
               : false
             )
           }

@@ -20,17 +20,15 @@ class UserListComponent extends PureComponent {
       error: null,
     };
     this.fetchNext = this.fetchNext.bind(this);
-    this.addToChat = this.addToChat.bind(this);
+    this.toggle = this.toggle.bind(this);
   }
 
   componentDidMount() {
-    if(!this.props.users.length){
-      this.fetchNext();
-    }
+    this.fetchNext();
   }
 
   componentWillUnmount() {
-    if (this.props.createChat && this.props.selectedUsers.length) {
+    if (this.props.selectedUsers.length) {
       this.props.dispatch(deselectUsers());   
     }
   }
@@ -45,33 +43,37 @@ class UserListComponent extends PureComponent {
       this.props.dispatch(addUsers(resp.items));
       this.props.dispatch(setNext(resp.next));
     } catch (err) {
-      console.error(err);
       this.setState({ error: err });
     }
   }
 
-  addToChat(contact) {
+  toggle(contact) {
     this.props.dispatch(toggleUser(contact));
   }
 
   render() {
     const { error } = this.state;
-    const { users, user, createChat, currentUserSearch } = this.props;
+    const { users, user, withToggle, rooms, currentUserSearch, editRoomId } = this.props;
     if (!users.length && !error) {
       return <Loader />;
     }
 
-    const newUsers = [...users];
+    let newUsers = [...users];
     const currentUserIndex = users.indexOf(users.find(item => item._id === user._id));
 
     if (currentUserIndex > -1) {
       newUsers.splice(currentUserIndex, 1)
     }
-    
+
+    if (editRoomId) {
+      const roomUsers = rooms[editRoomId].users;
+      newUsers = newUsers.filter(user => !roomUsers.includes(user._id));
+    }
+
     return (
       <React.Fragment>
         {
-          createChat
+          withToggle
           ? false
           : <Contact
               name={user.name}
@@ -85,7 +87,7 @@ class UserListComponent extends PureComponent {
         <SectionTitle title="Contacts" />        
         <InfiniteScroller
           loadMore={this.fetchNext}
-          className={createChat ? 'infinite-scroller_chat-create' : 'infinite-scroller_contacts'}
+          className={withToggle ? 'infinite-scroller_chat-create' : 'infinite-scroller_contacts'}
           next={this.props.next}
         >
           <Contacts
@@ -93,8 +95,8 @@ class UserListComponent extends PureComponent {
             contacts={newUsers}
             user={user}
             search={currentUserSearch}
-            addToChat={this.addToChat}
-            createChat={createChat}
+            toggle={this.toggle}
+            withToggle={withToggle}
           />
           {error ? <Error code={FETCH_CONTACTS_ERROR} /> : null}
         </InfiniteScroller>
@@ -110,6 +112,7 @@ const stateToProps = state => ({
   selectedUsers: state.user.selectedUsers,
   rooms: state.messages.rooms,
   currentRoomId: state.messages.currentRoomId,
+  editRoomId: state.messages.editRoomId,
   currentUserSearch: state.search.currentUserSearch,
 });
 

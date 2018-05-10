@@ -52,12 +52,22 @@ const DialogPage = () => (
 
 const CreateChatPage = () => (
   <Layout
-    header={<Header type="contacts" title="Contacts" subtitle="" createChat />}
+    header={<Header type="contacts" title="Contacts" subtitle="" withToggle toggleAction="newChat"/>}
     content={
       <React.Fragment>
         <ChatInput />
-        <UserList createChat />
+        <UserList withToggle />
       </React.Fragment>
+    }
+    footer={<Footer path="Chats" />}
+  />
+);
+
+const AddToChatPage = () => (
+  <Layout
+    header={<Header type="contacts" title="Contacts" subtitle="" withToggle toggleAction="addToChat"/>}
+    content={
+      <UserList withToggle />
     }
     footer={<Footer path="Chats" />}
   />
@@ -65,16 +75,11 @@ const CreateChatPage = () => (
 
 const EditChatPage = () => (
   <Layout
-    header={<Header type="contacts" title="Contacts" subtitle="" />}
-    content={
-      <React.Fragment>
-        <ChatUserList />
-      </React.Fragment>
-    }
+    header={<Header type="contacts" title="Contacts" subtitle="" withToggle toggleAction="goToEdit"/>}
+    content={<ChatUserList />}
     footer={<Footer path="Chats" />}
   />
 );
-
 
 export class App extends Component {
   render() {
@@ -83,10 +88,13 @@ export class App extends Component {
         <Route exact path="/" component={Login} />
         <Route exact path="/chats" component={ChatView} />
         <Route exact path="/contacts" component={ContactsPage} />
-        <Route exact path="/chat" component={DialogPage} />
         <Route exact path="/profile" component={ProfileView} />
+        
+        <Route exact path="/chat" component={DialogPage} />
         <Route exact path="/create_chat" component={CreateChatPage} />
         <Route exact path="/edit_chat" component={EditChatPage} />
+        <Route exact path="/add_to_chat" component={AddToChatPage} />
+        
       </Switch>
     );
   }

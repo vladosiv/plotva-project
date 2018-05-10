@@ -52,7 +52,7 @@ class ContactsComponent extends Component {
   };
 
   render() {
-    const {contacts, search, addToChat, createChat, user} = this.props;
+    const {contacts, search, withToggle, user, toggle} = this.props;
     return (
       <React.Fragment>
         <div className="contacts">
@@ -61,13 +61,18 @@ class ContactsComponent extends Component {
               
               const props = {};
               if (user) {
-                props.onClick = createChat ? () => addToChat(contact) : this.getChatId(contact);
+                props.onClick = withToggle ? () => toggle(contact) : this.getChatId(contact);
               } else {
                 props.onClick = () => this.props.dispatch(setCurrentRoom(contact._id));            
                 props.link = `/chat`;
               }
 
-              if (!search || contact.name.toLowerCase().indexOf(search.toLowerCase()) >= 0) {
+              const shouldRender = search === undefined
+              ? true
+              : contact.name.toLowerCase().indexOf(search.toLowerCase()) >= 0
+              
+
+              if (shouldRender) {
                 return <Contact key={index} color={`${index}`} {...props} {...contact} />;
               }
 

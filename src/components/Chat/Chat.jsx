@@ -14,13 +14,13 @@ class ChatComponent extends PureComponent {
     super();
     this.state = {
       error: null,
+      fethingUsers: false
     };
     this.fetchNext = this.fetchNext.bind(this);
   }
 
   componentDidMount() {
-    const {rooms, currentRoomId} = this.props;
-    this.fetchNext((rooms && rooms[currentRoomId] && rooms[currentRoomId].next) || true);
+    this.fetchNext();
     this.getChatUsers();
   }
 
@@ -41,16 +41,18 @@ class ChatComponent extends PureComponent {
   async getChatUsers() {
     const { rooms, currentRoomId, users } = this.props;
     const room = rooms && rooms[currentRoomId];
-    if (room) {
+    if (room && !this.state.fethingUsers) {
       const chatUsers = [];
       room.users.forEach(async id => {
         if(!users.find(user => user._id === id)) {
           chatUsers.push(api.getUser(id));
         }
       });
-      let result = await Promise.all(chatUsers);
-      if(result.length) {
+      if (chatUsers.length) {
+        this.setState({fethingUsers: true}); 
+        let result = await Promise.all(chatUsers);
         await this.props.dispatch(addUsers(result));
+        this.setState({fethingUsers: false});         
       }
     }
   }
@@ -68,7 +70,7 @@ class ChatComponent extends PureComponent {
     }
 
     let chatUsers = [];
-    if(users) {
+    if (users) {
       chatUsers = [user, ...users].filter(user => room.users.includes(user._id));
     }
 

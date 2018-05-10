@@ -80,6 +80,25 @@ export const messagesReducer = (state = initialState, action) => {
       };
     }
 
+    case MESSAGES_ACTION_TYPES.MESSAGES_ADD_USER_TO_ROOM: {
+      const rooms = state.rooms;
+      const room = rooms[action.payload.roomId];
+      if (room) {
+        return {
+          ...state,
+          rooms: {
+            ...rooms,
+            [room.roomId]: {
+              ...room,
+              users: [...room.users, action.payload._id],
+              count: room.count++
+            },
+          }
+        };
+      }
+      return state;
+    }
+
     case MESSAGES_ACTION_TYPES.MESSAGES_SET_NEXT:
     return {
       ...state,
@@ -90,6 +109,12 @@ export const messagesReducer = (state = initialState, action) => {
       return {
         ...state,
         currentRoomId: action.payload
+      } 
+
+      case MESSAGES_ACTION_TYPES.MESSAGES_SET_EDIT_ROOM:
+      return {
+        ...state,
+        editRoomId: action.payload
       } 
 
     case MESSAGES_ACTION_TYPES.MESSAGES_SET_CHAT_NAME:

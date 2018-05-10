@@ -15,7 +15,7 @@ class ChatsPageComponent extends Component {
   }
 
   componentDidMount() {
-    this.fetchNext(this.props.next);
+    this.fetchNext();
   }
 
   async fetchNext(next = this.props.next) {   
@@ -32,13 +32,13 @@ class ChatsPageComponent extends Component {
 
   async fetchRooms(next) {  
     const res = await api.getCurrentUserRooms(next);
+    await this.props.dispatch(setNext(res.next));    
     await Promise.all(
       res.items.map(async room => {
         await this.props.dispatch(fetchMessages(room._id));    
         await this.joinRoom(room._id);
       }),
     );
-    await this.props.dispatch(setNext(res.next))
     return res;
   }
 
@@ -53,9 +53,9 @@ class ChatsPageComponent extends Component {
   }
 
   render() {
-    const { rooms, error } = this.props;
+    const { rooms, error, next } = this.props;
 
-    if (!rooms && !error) {
+    if (!Object.keys(rooms).length && !error) {
       return <Loader />;
     }
 
@@ -69,7 +69,7 @@ class ChatsPageComponent extends Component {
     })).sort((a, b) => a.time < b.time);
 
     return (
-      <InfiniteScroller next={this.props.next} loadMore={this.fetchNext}>
+      <InfiniteScroller next={next} loadMore={this.fetchNext}>
         <Contacts contacts={chats} search="" />
         {error ? <Error code={FETCH_ROOMS_ERROR} /> : null}
       </InfiniteScroller>
