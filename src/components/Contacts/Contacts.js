@@ -62,6 +62,10 @@ class ContactsComponent extends Component {
               const shouldRender = withSearch
               ? contact.name.toLowerCase().indexOf(currentUserSearch.toLowerCase()) >= 0
               : true;
+
+              if (!contact.name){
+                contact.name = 'Nameless User'
+              }
               
               if (shouldRender) {
                 return <Contact key={index} color={`${index}`} {...props} {...contact} />;

@@ -51,7 +51,7 @@ class ChatsPageComponent extends Component {
 
     const chats = Object.keys(rooms).map(key => ({
       _id: rooms[key].roomId,
-      name: rooms[key].name || 'Nameless User',
+      name: rooms[key].name,
       content: rooms[key].lastMessage,
       userCount: rooms[key].count,
       time: rooms[key].lastMessageTime,
