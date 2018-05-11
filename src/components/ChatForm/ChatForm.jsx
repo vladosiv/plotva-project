@@ -7,32 +7,30 @@ import { sendMessage } from '../../store/actions/messagesActions';
 class ChatFormComponent extends PureComponent {
   constructor() {
     super();
-    this.state = {
-      messageText: '',
-    };
+    this.state = { messageText: ''};
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    if(this.state.messageText){
+    if (this.state.messageText) {
       this.props.sendMessage(this.state.messageText);
-      this.setState({
-        messageText: '',
-      });
+      this.setState({ messageText: '' });
     }
   }
 
   handleChange(e) {
-    this.setState({
-      messageText: e.target.value,
-    });
+    this.setState({ messageText: e.target.value});
   }
 
   render() {
     const { messageText } = this.state;
-    return <InputBar value={messageText} onChange={this.handleChange} onSubmit={this.handleSubmit} />;
+    return <InputBar
+              value={messageText}
+              onChange={this.handleChange}
+              onSubmit={this.handleSubmit}
+            />;
   }
 }
 

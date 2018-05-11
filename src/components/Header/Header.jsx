@@ -19,18 +19,15 @@ import { connect } from 'react-redux';
 class HeaderComponent extends Component {
 
   componentWillMount() {
+    const {currentRoomId, history} = this.props;
     const defaultLocations = [
       "/contacts",
       "/chats",
       "/profile",
       "/create_chat"
     ]
-    if (
-      !this.props.currentRoomId &&
-      !defaultLocations.includes(this.props.history.location.pathname)
-    )
-    {
-      this.props.history.push(`/chats`);
+    if ( !currentRoomId && !defaultLocations.includes(history.location.pathname) ){
+      history.push(`/chats`);
     }
   }
 
@@ -39,12 +36,12 @@ class HeaderComponent extends Component {
   }
 
   addToChat = async () => {
-    this.props.dispatch(addUsersToChat());
+    await this.props.dispatch(addUsersToChat());
     this.props.history.push(`/chat`);
   }
   
   newChat = async () => {
-    this.props.dispatch(createNewChat());
+    await this.props.dispatch(createNewChat());
     this.props.history.push(`/chat`);
   };
 

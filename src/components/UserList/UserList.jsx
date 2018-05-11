@@ -65,15 +65,7 @@ class UserListComponent extends PureComponent {
       newUsers = newUsers.filter(user => !roomUsers.includes(user._id));
     }
 
-    newUsers = newUsers.sort((a,b) => {
-      if (a.name > b.name) {
-        return 1;
-      }
-      if (a.name < b.name) {
-        return -1;
-      }
-      return 0;
-    });
+    newUsers = newUsers.sort(userListSort);
 
     return (
       <React.Fragment>
@@ -108,6 +100,12 @@ class UserListComponent extends PureComponent {
     );
   }
 }
+
+const userListSort = (a,b) => {
+  if (a.name > b.name) { return 1 }
+  if (a.name < b.name) { return -1 }
+  return 0;
+};
 
 const stateToProps = state => ({
   user: state.user.user,

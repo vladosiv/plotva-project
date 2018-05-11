@@ -33,7 +33,7 @@ export const Contact = props => {
   let date;
   let timeFormatted;
 
-  if(time) {
+  if (time) {
     date = new Date(time);
     timeFormatted = formatter.format(date);
   }
