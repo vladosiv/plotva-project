@@ -8,14 +8,16 @@ const initialState = {
 
 export const messagesReducer = (state = initialState, action) => {
   switch (action.type) {
-    case MESSAGES_ACTION_TYPES.MESSAGES_SET:
+
+    case MESSAGES_ACTION_TYPES.MESSAGES_SET:{
       return {
         ...state,
         rooms: {
           ...state.rooms,
           [action.payload.roomId]: action.payload
         }
-      };
+      };}
+
     case MESSAGES_ACTION_TYPES.MESSAGES_APPENDED: {
       const rooms = state.rooms;
       const room = rooms[action.payload.roomId];
@@ -92,12 +94,22 @@ export const messagesReducer = (state = initialState, action) => {
             [room.roomId]: {
               ...room,
               users: [...room.users, userId],
-              count: room.count++
+              count: ++room.count
             },
           }
         };
       }
       return state;
+    }
+
+    case MESSAGES_ACTION_TYPES.MESSAGES_CURRENT_USER_LEAVE_ROOM: {
+      const rooms = state.rooms;
+      Reflect.deleteProperty(rooms, action.payload);
+
+      return {
+        ...state,
+        rooms: rooms
+      };
     }
 
     case MESSAGES_ACTION_TYPES.MESSAGES_SET_NEXT:

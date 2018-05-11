@@ -69,3 +69,12 @@
   margin-right: 5px;
   background-image: url(./img/user-friends.svg);
 }
+
+.icon_sign-out {
+  position: absolute;
+  right: -35px;
+  width: 20px;
+  height: 24px;
+  margin-left: 5px;
+  background-image: url(./img/exit.svg);
+}

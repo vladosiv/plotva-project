@@ -1,5 +1,5 @@
 import api from './api';
-import { prependMessages, addUserToRoom } from './store/actions/messagesActions';
+import { prependMessages } from './store/actions/messagesActions';
 
 export const onMessageListener = async store => {
   await api.onMessage(result => {
@@ -20,14 +20,10 @@ export const onMessageListener = async store => {
       }),
     );
 
-    if (!("Notification" in window)) {
-      alert("This browser does not support desktop notification");
-    }
 
-    else if (Notification.permission === "granted") {
+    if (Notification.permission === "granted") {
       new Notification("New Message", {body: result.message, icon: '/favicon.ico'});
     }
-
     else if (Notification.permission !== 'denied') {
       Notification.requestPermission(function (permission) {
         if (permission === "granted") {
@@ -40,8 +36,18 @@ export const onMessageListener = async store => {
 
 export const onJoinRoomListener = async store => {
   await api.onUserJoinedRoom(result => {
+    console.log(result);
     // store.dispatch(
-    //   addUserToRoom({_id: result.userId, roomId: result.roomId})
+    //  addUserToRoom({_id: result.userId, roomId: result.roomId})
+    // ); 
+  });
+}
+
+export const onLeaveRoomListener = async store => {
+  await api.onUserLeavedRoom(result => {
+    console.log(result);
+    // store.dispatch(
+    //  addUserToRoom({_id: result.userId, roomId: result.roomId})
     // ); 
   });
 }

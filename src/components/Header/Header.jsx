@@ -7,32 +7,52 @@ import { Avatar } from "../Avatar/Avatar";
 import './Header.css';
 import api from '../../api';
 import { deselectUsers } from '../../store/actions/userActions';
-import { setCurrentRoom, setEditRoom } from '../../store/actions/messagesActions';
+import { setCurrentRoom, setEditRoom, addUserToRoom, currentUserLeaveRoom } from '../../store/actions/messagesActions';
 
 
 import { connect } from 'react-redux';
 
 class HeaderComponent extends Component {
 
+  componentWillMount() {
+    const defaultLocations = [
+      "/contacts",
+      "/chats",
+      "/profile"
+    ]
+    if (
+      !this.props.currentRoomId &&
+      !defaultLocations.includes(this.props.history.location.pathname)
+    )
+    {
+      this.props.history.push(`/chats`);
+    }
+  }
+
   goToEdit = async () => {
     this.props.history.push(`/add_to_chat`);
   }
 
   addToChat = async () => {
-    const {selectedUsers, rooms, currentRoomId} = this.props;
+    const {selectedUsers, rooms, currentRoomId, dispatch, history} = this.props;
     const room = rooms && rooms[currentRoomId];
-    for (let i = 0; i < selectedUsers.length; i++) {
-      await api.userJoinRoom(selectedUsers[i]._id, room.roomId)
+    if(selectedUsers.length) {
+      for (let i = 0; i < selectedUsers.length; i++) {
+        await api.userJoinRoom(selectedUsers[i]._id, room.roomId);
+        dispatch(
+          addUserToRoom({userId: selectedUsers[i]._id, roomId: room.roomId})
+        );
+      }
+      dispatch(setEditRoom('')); 
+      history.push(`/chat`);
     }
-    this.props.dispatch(setEditRoom('')); 
-    this.props.history.push(`/chat`);
   }
 
   newChat = async () => {
     const {user, selectedUsers} = this.props
     try {
       const rooms = await api.getRooms({ name: this.props.chatName });
-      if (!rooms.count) {
+      if (!rooms.count && selectedUsers.length) {
         const room = await this.createRoomWithUsers(this.props.chatName, [user, ...selectedUsers]);
         this.props.dispatch(deselectUsers());
         this.props.dispatch(setCurrentRoom(room._id)); 
@@ -54,6 +74,20 @@ class HeaderComponent extends Component {
       this.setState({ error: 'Произошла при создании комнаты.' });
     }
   };
+
+  leaveChat = async () => {
+    const {rooms, currentRoomId, dispatch} = this.props;
+    const room = rooms && rooms[currentRoomId];
+    
+    try {
+      await api.currentUserLeaveRoom(room.roomId);
+      dispatch(currentUserLeaveRoom(room.roomId));
+      this.props.history.push(`/chats`);
+    } catch (err) {
+      this.setState({ error: 'Произошла при выходе из комнаты.' });
+    }
+  }
+
   
   render() {
     let {title, subtitle, type = "chats", rooms, currentRoomId, withToggle, history, toggleAction} = this.props;
@@ -88,6 +122,10 @@ class HeaderComponent extends Component {
               subtitle={subtitle}
               isChat={isChat}
             />
+            {
+              type === "edit_chat" && 
+              <Icon type="sign-out" onClick = {this.leaveChat}/>
+            }
           </div>
         }
         <div className="header__right">

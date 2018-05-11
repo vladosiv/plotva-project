@@ -23,9 +23,9 @@ export class InfiniteScroller extends Component {
 
     if (this.props.reverse) {
       element.scrollTop = element.scrollHeight;
-    }
-    if (element.scrollTop === 0 && this.props.next) {
-      this.loadMore();
+      if (element.scrollTop === 0 && this.props.next) {
+        this.loadMore();
+      }
     }
   }
 

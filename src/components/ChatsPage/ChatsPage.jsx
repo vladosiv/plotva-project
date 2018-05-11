@@ -36,20 +36,10 @@ class ChatsPageComponent extends Component {
     await Promise.all(
       res.items.map(async room => {
         await this.props.dispatch(fetchMessages(room._id));    
-        await this.joinRoom(room._id);
+        await api.currentUserJoinRoom(room._id);
       }),
     );
     return res;
-  }
-
-  async joinRoom(roomId) {
-    try {
-      await api.currentUserJoinRoom(roomId);
-    } catch (error) {
-      this.setState({
-        error,
-      });
-    }
   }
 
   render() {

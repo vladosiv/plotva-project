@@ -37,6 +37,11 @@ export const addUserToRoom = payload => ({
   payload,
 });
 
+export const currentUserLeaveRoom = payload => ({
+  type: MESSAGES_ACTION_TYPES.MESSAGES_CURRENT_USER_LEAVE_ROOM,
+  payload,
+});
+
 const getMessages = (messages, currentUserId) => 
   messages.map(message => ({
     id: message._id,
@@ -45,15 +50,6 @@ const getMessages = (messages, currentUserId) =>
     time: message.created_at,
     isMy: currentUserId === message.userId,
   }));
-
-export const joinUserToRoom = (userId, roomId) => async (dispatch, getState) => {
-  const room = getState().messages.rooms[roomId];
-  if (!room) {
-    dispatch(fetchMessages(roomId));
-  } else {
-    dispatch(addUserToRoom({userId, roomId}));    
-  }
-}
 
 export const fetchMessages = roomId => async (dispatch, getState) => {
   const room = getState().messages.rooms[roomId];
@@ -78,6 +74,7 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
       const room = await api.getRoom(roomId);      
       response = await api.getRoomMessages(roomId);
       const messages = getMessages(response.items, currentUserId);
+
       if (!room.isChat) {
         const recepientId = room.users.find(roomUserID => roomUserID !== currentUserId);        
         let recepient = users.find(user => user._id === recepientId);
@@ -117,6 +114,15 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
   }
 };
 
+export const joinUserToRoom = (userId, roomId) => async (dispatch, getState) => {
+  const room = getState().messages.rooms[roomId];
+  if (!room) {
+    dispatch(fetchMessages(roomId));
+  } else {
+    dispatch(addUserToRoom({userId, roomId}));    
+  }
+}
+
 export const sendMessage = (messageText) => async (dispatch, getState) => {
   try {
     const currentUserId = getState().user.user._id;
@@ -134,8 +140,3 @@ export const setChatName = query => ({
   type: MESSAGES_ACTION_TYPES.MESSAGES_SET_CHAT_NAME,
   payload: query,
 });
-
-
-
-  
-
