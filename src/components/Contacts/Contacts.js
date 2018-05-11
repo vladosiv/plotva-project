@@ -4,6 +4,8 @@ import { Contact } from '../Contact/Contact';
 import { connect } from 'react-redux';
 import { setCurrentRoom, goToDialog } from '../../store/actions/messagesActions';
 import { toggleUser } from '../../store/actions/userActions';
+import api from '../../api';
+
 
 
 import './Contacts.css';
@@ -16,14 +18,23 @@ class ContactsComponent extends Component {
     };
   }
 
-  goToDialog = contact => async e => {
-    this.props.dispatch(goToDialog(contact));
-    this.props.history.push(`/chat`);
-  };
-
   toggle = contact => {
     this.props.dispatch(toggleUser(contact));
   }
+
+  getChatId = contact => async e => {
+    const currentUserId = this.props.user._id;
+    const name = [currentUserId, contact._id].sort().toString();
+    const rooms = await api.getRooms({ name });
+    if (!rooms.count) {
+      const room = await api.createRoom({ name });
+      await api.userJoinRoom(contact._id, room._id);
+      this.props.dispatch(setCurrentRoom(room._id));            
+    } else {
+      this.props.dispatch(setCurrentRoom(rooms.items[0]._id));
+    }
+    this.props.history.push(`/chat`);
+  };
 
   render() {
     const {contacts, currentUserSearch, user, withToggle, withSearch} = this.props;
@@ -35,7 +46,7 @@ class ContactsComponent extends Component {
               
               const props = {};
               if (user) {
-                props.onClick = withToggle ? () => this.toggle(contact) : this.goToDialog(contact);
+                props.onClick = withToggle ? () => this.toggle(contact) : this.getChatId(contact);
               } else {
                 props.onClick = () => this.props.dispatch(setCurrentRoom(contact._id));            
                 props.link = `/chat`;

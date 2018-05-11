@@ -175,7 +175,7 @@ export const createNewChat = () => async (dispatch, getState) => {
   }
 };
 
-export const goToDialog = (contact) => async (dispatch, getState) => {
+export const goToDialog = contact => async (dispatch, getState) => {
   const user = getState().user.user; 
   const name = [user._id, contact._id].sort().toString();
 
@@ -183,7 +183,7 @@ export const goToDialog = (contact) => async (dispatch, getState) => {
 
   if(!room.count){
     room = await api.createRoom({ name });
-    await api.userJoinRoom(user._id, room._id);
+    await api.userJoinRoom(contact._id, room._id);
     dispatch(setCurrentRoom(room._id));
   } else {
     dispatch(setCurrentRoom(room.items[0]._id));
