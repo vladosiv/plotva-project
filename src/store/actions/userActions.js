@@ -1,4 +1,5 @@
 import { USER_ACTION_TYPES } from './actionTypes';
+import api from '../../api';
 
 export const setUser = user => ({
   type: USER_ACTION_TYPES.SET_USER,
@@ -39,3 +40,25 @@ export const setSearch = payload => ({
   type: USER_ACTION_TYPES.SET_SEARCH,
   payload,
 });
+
+export const getCurrentChatUsers = () => async (dispatch, getState) => {
+  const users = getState().user.users; 
+  const rooms = getState().messages.rooms;
+  const currentRoomId = getState().messages.currentRoomId;
+  const room = rooms[currentRoomId];
+
+  if (room) {
+    const chatUsers = [];
+    room.users.forEach(async id => {
+      if(!users.find(user => user._id === id)) {
+        chatUsers.push(api.getUser(id));
+      }
+    });
+    if (chatUsers.length) {
+      this.setState({fethingUsers: true}); 
+      let result = await Promise.all(chatUsers);
+      await dispatch(addUsers(result));
+    }
+  }
+  return true;
+};

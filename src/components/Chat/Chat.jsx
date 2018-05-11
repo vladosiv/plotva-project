@@ -3,11 +3,10 @@ import { connect } from 'react-redux';
 import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
 import { MessagesList } from '../MessagesList/MessagesList';
 import { fetchMessages } from '../../store/actions/messagesActions';
-import { addUsers } from '../../store/actions/userActions';
+import { getCurrentChatUsers } from '../../store/actions/userActions';
 import { Error } from '../Error/Error';
 import { Loader } from '../Loader/Loader';
 import { FETCH_MESSAGES_ERROR } from '../../errorCodes';
-import api from '../../api';
 
 class ChatComponent extends PureComponent {
   constructor() {
@@ -38,21 +37,9 @@ class ChatComponent extends PureComponent {
   }
 
   async getChatUsers() {
-    const { rooms, currentRoomId, users } = this.props;
-    const room = rooms && rooms[currentRoomId];
-    if (room && !this.state.fethingUsers) {
-      const chatUsers = [];
-      room.users.forEach(async id => {
-        if(!users.find(user => user._id === id)) {
-          chatUsers.push(api.getUser(id));
-        }
-      });
-      if (chatUsers.length) {
-        this.setState({fethingUsers: true}); 
-        let result = await Promise.all(chatUsers);
-        await this.props.dispatch(addUsers(result));
-        this.setState({fethingUsers: false});         
-      }
+    if (!this.state.fethingUsers) {
+      await getCurrentChatUsers();
+      this.setState({fethingUsers: false});               
     }
   }
 
@@ -86,8 +73,7 @@ const stateToProps = state => ({
   user: state.user.user,
   users: state.user.users,
   rooms: state.messages.rooms,
-  currentRoomId: state.messages.currentRoomId,  
-  editRoomId: state.messages.editRoomId,  
+  currentRoomId: state.messages.currentRoomId
 });
 
 export const Chat = connect(stateToProps)(ChatComponent);
