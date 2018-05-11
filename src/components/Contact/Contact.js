@@ -27,7 +27,8 @@ export const Contact = props => {
     size = 'large',
     contentType = 'message',
     checked = false,
-    group
+    group,
+    lastMessageUserName,
   } = props;
 
   let date;
@@ -68,7 +69,8 @@ export const Contact = props => {
         <div className="content__body">
           {content
             ? <div className={`content__text content__text_${contentType}`}>
-                {content}
+                { lastMessageUserName ? lastMessageUserName : false }
+                { content }
               </div>
             : false
           }

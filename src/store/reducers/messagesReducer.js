@@ -49,9 +49,10 @@ export const messagesReducer = (state = initialState, action) => {
     }
 
     case MESSAGES_ACTION_TYPES.MESSAGES_PREPENDED: {
-      const rooms = state.rooms;
+      const rooms = state.rooms;      
       const room = rooms[action.payload.roomId];
-
+      const message = action.payload.messages[0];
+      const lastMessageUserName = action.payload.lastMessageUserName;
       if (room && room.messages.length > 0) {
         return {
           ...state,
@@ -61,8 +62,9 @@ export const messagesReducer = (state = initialState, action) => {
               ...room,
               messages: [...action.payload.messages, ...room.messages],
               next: action.payload.next,
-              lastMessage: action.payload.messages[0].text,
-              lastMessageTime: action.payload.messages[0].time
+              lastMessage: message.text,
+              lastMessageTime: message.time,
+              lastMessageUserName
             },
           }
         };
@@ -75,8 +77,9 @@ export const messagesReducer = (state = initialState, action) => {
             ...room,
             messages: [...action.payload.messages],
             next: null,
-            lastMessage: action.payload.messages[0].text,
-            lastMessageTime: action.payload.messages[0].time
+            lastMessage: message.text,
+            lastMessageTime: message.time,
+            lastMessageUserName
           },
         }
       };

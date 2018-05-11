@@ -66,7 +66,8 @@ const getChats = rooms => Object.keys(rooms).map(key => ({
   content: rooms[key].lastMessage,
   userCount: rooms[key].count,
   time: rooms[key].lastMessageTime,
-  group: rooms[key].isChat
+  group: rooms[key].isChat,
+  lastMessageUserName: rooms[key].lastMessageUserName,
 }));
 
 const chatListSort = (a, b) => {

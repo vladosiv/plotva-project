@@ -1,8 +1,9 @@
 import api from './api';
 import { prependMessages } from './store/actions/messagesActions';
+import { addUsers } from './store/actions/userActions';
 
 export const onMessageListener = async store => {
-  await api.onMessage(result => {
+  await api.onMessage(async result => {
     const message = [
       {
         id: result._id,
@@ -13,10 +14,26 @@ export const onMessageListener = async store => {
       },
     ];
 
+    const user = store.getState().user.user;
+    const users = store.getState().user.users;
+    let lastMessageUserName;
+
+    if (result.userId === user._id){
+      lastMessageUserName = 'You: '
+    } else {
+      let lastMessageUser = users.find(user => user._id === result.userId);
+      if (result.userId && !lastMessageUser) {
+        lastMessageUser = await api.getUser(result.userId);
+        store.dispatch(addUsers([lastMessageUser]));
+      } 
+      lastMessageUserName = `${lastMessageUser.name}: `
+    }
+
     store.dispatch(
       prependMessages({
         roomId: result.roomId,
         messages: message,
+        lastMessageUserName
       }),
     );
 

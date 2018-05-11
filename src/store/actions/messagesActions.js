@@ -79,8 +79,24 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
       const room = await api.getRoom(roomId);      
       response = await api.getRoomMessages(roomId);
       const messages = getMessages(response.items, currentUserId);
+      const lastMessageUserId = messages[0] && messages[0].userId;
 
       let roomName;
+      let lastMessageUserName;
+
+      if (lastMessageUserId) {
+        if (lastMessageUserId === currentUserId){
+          lastMessageUserName = 'You: ';
+        } else {
+          let lastMessageUser = users.find(user => user._id === lastMessageUserId);
+          if (lastMessageUserId && !lastMessageUser) {
+            lastMessageUser = await api.getUser(lastMessageUserId);
+            dispatch(addUsers([lastMessageUser]));
+          } 
+          lastMessageUserName = `${lastMessageUser.name}: `;
+        }
+      } 
+
       if (!room.isChat) {
         const recepientId = room.users.find(roomUserID => roomUserID !== currentUserId);        
         let recepient = users.find(user => user._id === recepientId);
@@ -96,9 +112,10 @@ export const fetchMessages = roomId => async (dispatch, getState) => {
       dispatch(setRoom({
         roomId,
         name: roomName,
+        messages,        
         lastMessage: (messages[0] && messages[0].text) || 'No messages',
         lastMessageTime: (messages[0] && messages[0].time) || '',
-        messages,
+        lastMessageUserName,       
         isChat: room.isChat,
         admin: room.admin,
         users: room.users,
@@ -151,7 +168,7 @@ export const sendMessage = (messageText) => async (dispatch, getState) => {
     const roomId = getState().messages.currentRoomId;
     const response = await api.sendMessage(roomId, messageText);
     const message = getMessages([response], currentUserId);
-    dispatch(prependMessages({ roomId, messages: message }));
+    dispatch(prependMessages({ roomId, messages: message, lastMessageUserName: 'You: ' }));
     return response;
   } catch (error) {
     console.log(error);
