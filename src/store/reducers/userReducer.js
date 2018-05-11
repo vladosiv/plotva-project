@@ -1,6 +1,11 @@
 import { USER_ACTION_TYPES } from '../actions/actionTypes';
 
-export const userReducer = (state = {users: [], selectedUsers: []}, action) => {
+const initialState = {
+  users: [],
+  selectedUsers: [],
+  currentUserSearch:''
+}
+export const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case USER_ACTION_TYPES.SET_USER:
       return {
@@ -59,7 +64,7 @@ export const userReducer = (state = {users: [], selectedUsers: []}, action) => {
         selectedUsers: action.users,
       };
 
-    case USER_ACTION_TYPES.DESELECT_USERS:{
+    case USER_ACTION_TYPES.DESELECT_USERS :{
       const users = [...state.users];
       users.forEach(user => {user.checked = false});
       return {
@@ -68,6 +73,12 @@ export const userReducer = (state = {users: [], selectedUsers: []}, action) => {
         selectedUsers: []
       };
     }
+
+    case USER_ACTION_TYPES.SET_SEARCH:
+      return {
+        ...state,
+        currentUserSearch: action.payload,
+      };
 
     default:
       return state;

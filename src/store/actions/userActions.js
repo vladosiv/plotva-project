@@ -34,3 +34,8 @@ export const deselectUsers = users => ({
   type: USER_ACTION_TYPES.DESELECT_USERS,
   users,
 });
+
+export const setSearch = payload => ({
+  type: USER_ACTION_TYPES.SET_SEARCH,
+  payload,
+});

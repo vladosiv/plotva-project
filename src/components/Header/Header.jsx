@@ -6,8 +6,12 @@ import { HeaderBtn } from "../HeaderBtn/HeaderBtn";
 import { Avatar } from "../Avatar/Avatar";
 import './Header.css';
 import api from '../../api';
-import { deselectUsers } from '../../store/actions/userActions';
-import { setCurrentRoom, setEditRoom, addUserToRoom, currentUserLeaveRoom } from '../../store/actions/messagesActions';
+
+import {
+  createNewChat,
+  currentUserLeaveRoom,
+  addUsersToChat
+} from '../../store/actions/messagesActions';
 
 
 import { connect } from 'react-redux';
@@ -35,49 +39,13 @@ class HeaderComponent extends Component {
   }
 
   addToChat = async () => {
-    const {selectedUsers, rooms, currentRoomId, dispatch, history} = this.props;
-    const room = rooms && rooms[currentRoomId];
-    if(selectedUsers.length) {
-      for (let i = 0; i < selectedUsers.length; i++) {
-        await api.userJoinRoom(selectedUsers[i]._id, room.roomId);
-        dispatch(
-          addUserToRoom({userId: selectedUsers[i]._id, roomId: room.roomId})
-        );
-      }
-      dispatch(setEditRoom('')); 
-      history.push(`/chat`);
-    }
+    this.props.dispatch(addUsersToChat());
+    this.props.history.push(`/chat`);
   }
-
+  
   newChat = async () => {
-    const {user, selectedUsers, chatName, dispatch, history} = this.props;
-    let newChatName = chatName;
-    try {
-      if(!chatName){
-        newChatName = [user, ...selectedUsers].map(user => user.name).join(', ')
-      }
-      const rooms = await api.getRooms({ name: newChatName });
-      if (!rooms.count && selectedUsers.length) {
-        const room = await this.createRoomWithUsers(newChatName, [user, ...selectedUsers]);
-        dispatch(deselectUsers());
-        dispatch(setCurrentRoom(room._id)); 
-        history.push(`/chat`);
-      }
-    } catch (err) {
-      this.setState({ error: 'Произошла ошибка.' });
-    }
-  };
-
-  createRoomWithUsers = async (name, users) => {
-    try {
-      const room = await api.createRoom({ name, isChat: true, admin: this.props.user._id });
-      for (let i = 0; i < users.length; i++) {
-        await api.userJoinRoom(users[i]._id, room._id)
-      }
-      return room;
-    } catch (err) {
-      this.setState({ error: 'Произошла при создании комнаты.' });
-    }
+    this.props.dispatch(createNewChat());
+    this.props.history.push(`/chat`);
   };
 
   leaveChat = async () => {
@@ -121,11 +89,7 @@ class HeaderComponent extends Component {
         {
           title && 
           <div className="header__center">
-            <HeaderTitle
-              title={title}
-              subtitle={subtitle}
-              isChat={isChat}
-            />
+            <HeaderTitle title={title} subtitle={subtitle} isChat={isChat} />
             {
               type === "edit_chat" && 
               <Icon type="sign-out" onClick = {this.leaveChat}/>
@@ -147,10 +111,6 @@ class HeaderComponent extends Component {
 }
 
 const stateToProps = state => ({
-  selectedUsers: state.user.selectedUsers,
-  chatName: state.messages.currentChatName,
-  user: state.user.user,
-  users: state.user.users,
   rooms: state.messages.rooms,
   currentRoomId: state.messages.currentRoomId  
 });

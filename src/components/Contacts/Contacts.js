@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Contact } from '../Contact/Contact';
-import api from '../../api';
 import { connect } from 'react-redux';
-import { setCurrentRoom } from '../../store/actions/messagesActions';
+import { setCurrentRoom, goToDialog } from '../../store/actions/messagesActions';
+import { toggleUser } from '../../store/actions/userActions';
 
 
 import './Contacts.css';
@@ -16,35 +16,17 @@ class ContactsComponent extends Component {
     };
   }
 
-  getChatId = contact => async e => {
-    const currentUserId = this.props.user._id;
-    const roomMembers = [currentUserId, contact._id].sort().toString();
-    try {
-      const rooms = await api.getRooms({ name: roomMembers });
-      if (!rooms.count) {
-        this.createRoomWithUser(roomMembers, contact._id);
-      } else {
-        this.props.dispatch(setCurrentRoom(rooms.items[0]._id));
-        this.props.history.push(`/chat`);
-      }
-    } catch (err) {
-      this.setState({ error: 'Произошла ошибка.' });
-    }
+  goToDialog = contact => async e => {
+    this.props.dispatch(goToDialog(contact));
+    this.props.history.push(`/chat`);
   };
 
-  createRoomWithUser = async (name, userId) => {
-    try {
-      const room = await api.createRoom({ name });
-      await api.userJoinRoom(userId, room._id);
-      this.props.dispatch(setCurrentRoom(room._id));            
-      this.props.history.push(`/chat`);
-    } catch (err) {
-      this.setState({ error: 'Произошла при создании комнаты.' });
-    }
-  };
+  toggle = contact => {
+    this.props.dispatch(toggleUser(contact));
+  }
 
   render() {
-    const {contacts, currentUserSearch, withToggle, user, toggle, withSearch} = this.props;
+    const {contacts, currentUserSearch, user, withToggle, withSearch} = this.props;
     return (
       <React.Fragment>
         <div className="contacts">
@@ -53,7 +35,7 @@ class ContactsComponent extends Component {
               
               const props = {};
               if (user) {
-                props.onClick = withToggle ? () => toggle(contact) : this.getChatId(contact);
+                props.onClick = withToggle ? () => this.toggle(contact) : this.goToDialog(contact);
               } else {
                 props.onClick = () => this.props.dispatch(setCurrentRoom(contact._id));            
                 props.link = `/chat`;
@@ -63,9 +45,7 @@ class ContactsComponent extends Component {
               ? contact.name.toLowerCase().indexOf(currentUserSearch.toLowerCase()) >= 0
               : true;
 
-              if (!contact.name){
-                contact.name = 'Nameless User'
-              }
+              if (!contact.name){ contact.name = 'Nameless User' }
               
               if (shouldRender) {
                 return <Contact key={index} color={`${index}`} {...props} {...contact} />;
@@ -82,7 +62,7 @@ class ContactsComponent extends Component {
 }
 
 const stateToProps = state => ({
-  currentUserSearch: state.search.currentUserSearch
+  currentUserSearch: state.user.currentUserSearch
 });
 
 export const Contacts = withRouter(connect(stateToProps)(ContactsComponent));

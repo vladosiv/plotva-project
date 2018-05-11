@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import './SearchInput.css';
-import { setSearch } from '../../store/actions/searchActions';
+import { setSearch } from '../../store/actions/userActions';
 
 const stateToProps = state => ({
-  current: state.search.user,
+  current: state.user.currentUserSearch,
 });
 
 export const SearchInput = connect(stateToProps)(

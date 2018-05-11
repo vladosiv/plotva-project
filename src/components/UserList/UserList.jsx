@@ -5,7 +5,7 @@ import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
 import { Contact } from '../Contact/Contact';
 import { SectionTitle } from '../SectionTitle/SectionTitle';
 
-import { addUsers, setNext, toggleUser, deselectUsers } from '../../store/actions/userActions';
+import { addUsers, setNext, deselectUsers } from '../../store/actions/userActions';
 import { Loader } from '../Loader/Loader';
 import { Error } from '../Error/Error';
 import { FETCH_CONTACTS_ERROR } from '../../errorCodes';
@@ -20,7 +20,6 @@ class UserListComponent extends PureComponent {
       error: null,
     };
     this.fetchNext = this.fetchNext.bind(this);
-    this.toggle = this.toggle.bind(this);
   }
 
   componentDidMount() {
@@ -45,10 +44,6 @@ class UserListComponent extends PureComponent {
     } catch (err) {
       this.setState({ error: err });
     }
-  }
-
-  toggle(contact) {
-    this.props.dispatch(toggleUser(contact));
   }
 
   render() {
@@ -104,7 +99,6 @@ class UserListComponent extends PureComponent {
             type="contactList"
             contacts={newUsers}
             user={user}
-            toggle={this.toggle}
             withToggle={withToggle}
             withSearch
           />
