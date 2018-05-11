@@ -70,6 +70,16 @@ class UserListComponent extends PureComponent {
       newUsers = newUsers.filter(user => !roomUsers.includes(user._id));
     }
 
+    newUsers = newUsers.sort((a,b) => {
+      if (a.name > b.name) {
+        return 1;
+      }
+      if (a.name < b.name) {
+        return -1;
+      }
+      return 0;
+    });
+
     return (
       <React.Fragment>
         {

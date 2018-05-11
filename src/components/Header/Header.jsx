@@ -93,7 +93,6 @@ class HeaderComponent extends Component {
     }
   }
 
-  
   render() {
     let {title, subtitle, type = "chats", rooms, currentRoomId, withToggle, history, toggleAction} = this.props;
     let size = subtitle ? "lg" : "sm";

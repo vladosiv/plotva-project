@@ -51,12 +51,20 @@ class ChatsPageComponent extends Component {
 
     const chats = Object.keys(rooms).map(key => ({
       _id: rooms[key].roomId,
-      name: rooms[key].name,
+      name: rooms[key].name || 'Nameless User',
       content: rooms[key].lastMessage,
       userCount: rooms[key].count,
       time: rooms[key].lastMessageTime,
       group: rooms[key].isChat
-    })).sort((a, b) => a.time < b.time);
+    })).sort((a, b) => {
+      if (a.time < b.time) {
+        return 1;
+      }
+      if (a.time > b.time) {
+        return -1;
+      }
+      return 0;
+    });
 
     return (
       <InfiniteScroller next={next} loadMore={this.fetchNext}>
@@ -75,5 +83,3 @@ const stateToProps = state => ({
 });
 
 export const ChatsPage = connect(stateToProps)(ChatsPageComponent);
-
-
