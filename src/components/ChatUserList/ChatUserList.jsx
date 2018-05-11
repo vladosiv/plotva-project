@@ -47,7 +47,12 @@ class ChatUserListComponent extends PureComponent {
       <React.Fragment>
         <SectionTitle title="Contacts" />
         <InfiniteScroller className={'infinite-scroller_chat-members'}>        
-          <Contacts type="contactList" contacts={newUsers} user={user}/>
+          <Contacts
+            type="contactList"
+            contacts={newUsers}
+            user={user}
+            withSearch
+          />
         </InfiniteScroller>
         {error ? <Error code={FETCH_CONTACTS_ERROR} /> : null}
       </React.Fragment>

@@ -3,12 +3,14 @@ import './Avatar.css';
 import {getColor} from './DefaultColors.js'
 
 export function Avatar ({ size = 'large', img, checked, name, color='0' }) {
+  
     let defaultName = '';
     if (name) {
       name.split(' ').forEach(word => {
         defaultName += word[0].toUpperCase();
       });
     }
+    
     return (
       <div className={`avatar avatar_${size} ${checked ? 'avatar_checked' : ''}`}>
       { img

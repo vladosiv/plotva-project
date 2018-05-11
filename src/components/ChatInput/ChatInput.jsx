@@ -21,7 +21,7 @@ export const ChatInput = connect(stateToProps)(
         <input
           className="search"
           type="search"
-          placeholder="Enter new qnique chat name."
+          placeholder="Enter new unique chat name."
           onChange={this.getNewChatName}
         />
       );

@@ -61,7 +61,7 @@ export const userReducer = (state = {users: [], selectedUsers: []}, action) => {
 
     case USER_ACTION_TYPES.DESELECT_USERS:{
       const users = [...state.users];
-      users.forEach(user => user.checked = false);
+      users.forEach(user => {user.checked = false});
       return {
         ...state,
         users: users,

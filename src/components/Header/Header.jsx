@@ -18,7 +18,8 @@ class HeaderComponent extends Component {
     const defaultLocations = [
       "/contacts",
       "/chats",
-      "/profile"
+      "/profile",
+      "/create_chat"
     ]
     if (
       !this.props.currentRoomId &&
@@ -49,14 +50,18 @@ class HeaderComponent extends Component {
   }
 
   newChat = async () => {
-    const {user, selectedUsers} = this.props
+    const {user, selectedUsers, chatName, dispatch, history} = this.props;
+    let newChatName = chatName;
     try {
-      const rooms = await api.getRooms({ name: this.props.chatName });
+      if(!chatName){
+        newChatName = [user, ...selectedUsers].map(user => user.name).join(', ')
+      }
+      const rooms = await api.getRooms({ name: newChatName });
       if (!rooms.count && selectedUsers.length) {
-        const room = await this.createRoomWithUsers(this.props.chatName, [user, ...selectedUsers]);
-        this.props.dispatch(deselectUsers());
-        this.props.dispatch(setCurrentRoom(room._id)); 
-        this.props.history.push(`/chat`);
+        const room = await this.createRoomWithUsers(newChatName, [user, ...selectedUsers]);
+        dispatch(deselectUsers());
+        dispatch(setCurrentRoom(room._id)); 
+        history.push(`/chat`);
       }
     } catch (err) {
       this.setState({ error: 'Произошла ошибка.' });

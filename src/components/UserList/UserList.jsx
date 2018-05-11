@@ -53,7 +53,7 @@ class UserListComponent extends PureComponent {
 
   render() {
     const { error } = this.state;
-    const { users, user, withToggle, rooms, currentUserSearch, edit, currentRoomId } = this.props;
+    const { users, user, withToggle, rooms, edit, currentRoomId, next } = this.props;
     if (!users.length && !error) {
       return <Loader />;
     }
@@ -73,9 +73,8 @@ class UserListComponent extends PureComponent {
     return (
       <React.Fragment>
         {
-          withToggle
-          ? false
-          : <Contact
+          !withToggle
+          ? <Contact
               name={user.name}
               content={user.phone}
               img={user.img}
@@ -83,20 +82,21 @@ class UserListComponent extends PureComponent {
               contentType="message"
               color="7"
             />
+          : false
         }
         <SectionTitle title="Contacts" />        
         <InfiniteScroller
           loadMore={this.fetchNext}
           className={withToggle ? 'infinite-scroller_chat-create' : 'infinite-scroller_contacts'}
-          next={this.props.next}
+          next={next}
         >
           <Contacts
             type="contactList"
             contacts={newUsers}
             user={user}
-            search={currentUserSearch}
             toggle={this.toggle}
             withToggle={withToggle}
+            withSearch
           />
           {error ? <Error code={FETCH_CONTACTS_ERROR} /> : null}
         </InfiniteScroller>
@@ -112,7 +112,6 @@ const stateToProps = state => ({
   selectedUsers: state.user.selectedUsers,
   rooms: state.messages.rooms,
   currentRoomId: state.messages.currentRoomId,
-  currentUserSearch: state.search.currentUserSearch,
 });
 
 export const UserList = connect(stateToProps)(UserListComponent);

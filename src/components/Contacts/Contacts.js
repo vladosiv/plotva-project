@@ -52,7 +52,7 @@ class ContactsComponent extends Component {
   };
 
   render() {
-    const {contacts, search, withToggle, user, toggle} = this.props;
+    const {contacts, currentUserSearch, withToggle, user, toggle, withSearch} = this.props;
     return (
       <React.Fragment>
         <div className="contacts">
@@ -67,11 +67,10 @@ class ContactsComponent extends Component {
                 props.link = `/chat`;
               }
 
-              const shouldRender = search === undefined
-              ? true
-              : contact.name.toLowerCase().indexOf(search.toLowerCase()) >= 0
+              const shouldRender = withSearch
+              ? contact.name.toLowerCase().indexOf(currentUserSearch.toLowerCase()) >= 0
+              : true;
               
-
               if (shouldRender) {
                 return <Contact key={index} color={`${index}`} {...props} {...contact} />;
               }
@@ -86,6 +85,8 @@ class ContactsComponent extends Component {
   }
 }
 
-const stateToProps = state => ({});
+const stateToProps = state => ({
+  currentUserSearch: state.search.currentUserSearch
+});
 
 export const Contacts = withRouter(connect(stateToProps)(ContactsComponent));
