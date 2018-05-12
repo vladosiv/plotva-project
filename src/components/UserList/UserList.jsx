@@ -1,9 +1,12 @@
 import React, { PureComponent } from 'react';
+
 import { Contacts } from '../Contacts/Contacts';
 import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
 import { Contact } from '../Contact/Contact';
-import { setUsers, setNext, setSelectedUsers } from '../../store/actions/userActions';
-import { NoResults } from '../NoResults/NoResults';
+import { SectionTitle } from '../SectionTitle/SectionTitle';
+
+import { addUsers, setNext, deselectUsers } from '../../store/actions/userActions';
+import { Loader } from '../Loader/Loader';
 import { Error } from '../Error/Error';
 import { FETCH_CONTACTS_ERROR } from '../../errorCodes';
 import { connect } from 'react-redux';
@@ -17,21 +20,16 @@ class UserListComponent extends PureComponent {
       error: null,
     };
     this.fetchNext = this.fetchNext.bind(this);
-    this.addToChat = this.addToChat.bind(this);
   }
 
-  async componentDidMount() {
-    //two pages to fill the screen
-    await this.fetchNext();
-    await this.fetchNext();
+  componentDidMount() {
+    this.fetchNext();
   }
 
   componentWillUnmount() {
-    const users = [].concat(this.props.users);
-    users.forEach(user => {user.checked = false});
-
-    this.props.dispatch(setUsers(users));        
-    this.props.dispatch(setSelectedUsers([]));    
+    if (this.props.selectedUsers.length) {
+      this.props.dispatch(deselectUsers());   
+    }
   }
 
   async fetchNext() {
@@ -41,70 +39,61 @@ class UserListComponent extends PureComponent {
     }
     try {
       let resp = await api.getUsers(next);
-      const users = this.props.users.concat(
-          resp.items.map(user => {
-            const status = user.online ? 'online' : 'offline';
-            return {
-              _id: user._id,
-              userName: user.name ? user.name : 'Anonymous',
-              avatar: user.img,
-              size: 'small',
-              content: status,
-              contentType: status,
-            };
-          }))
-          this.props.dispatch(setUsers(users));
-          this.props.dispatch(setNext(resp.next));
+      this.props.dispatch(addUsers(resp.items));
+      this.props.dispatch(setNext(resp.next));
     } catch (err) {
-      console.error(err);
       this.setState({ error: err });
     }
   }
 
-  addToChat(index) {
-    const users = [].concat(this.props.users);
-    const selectedUsers = [].concat(this.props.selectedUsers);
-    const current = users[index];
-
-    if (!current.checked){
-      selectedUsers.push(current);
-      this.props.dispatch(setSelectedUsers(selectedUsers))
-    } else {
-      let user = selectedUsers.find(user => user._id === current._id);
-      let deleteIndex = selectedUsers.indexOf(user);
-      selectedUsers.splice(deleteIndex, 1);
-      this.props.dispatch(setSelectedUsers(selectedUsers));
-    }
-
-    current.checked = !current.checked;
-    this.props.dispatch(setUsers(users));
-    
-  }
-
   render() {
     const { error } = this.state;
-    const { users, user, createChat, current } = this.props;
+    const { users, user, withToggle, rooms, edit, currentRoomId, next } = this.props;
     if (!users.length && !error) {
-      return <NoResults text="No contacts yet..." />;
+      return <Loader />;
     }
+
+    let newUsers = [...users];
+    const currentUserIndex = users.indexOf(users.find(item => item._id === user._id));
+
+    if (currentUserIndex > -1) {
+      newUsers.splice(currentUserIndex, 1)
+    }
+
+    if (edit) {
+      const roomUsers = rooms[currentRoomId].users;
+      newUsers = newUsers.filter(user => !roomUsers.includes(user._id));
+    }
+
+    newUsers = newUsers.sort(userListSort);
+
     return (
       <React.Fragment>
         {
-          createChat
-          ? false
-          : (
-            <Contact
-              userName={user.name}
+          !withToggle
+          ? <Contact
+              name={user.name}
               content={user.phone}
-              avatar={user.img}
+              img={user.img}
               size="large"
               contentType="message"
               color="7"
             />
-          )
+          : false
         }
-        <InfiniteScroller loadMore={this.fetchNext}>
-          <Contacts type="contactList" contacts={users} user={user} search={current} addToChat={this.addToChat} createChat={createChat} />
+        <SectionTitle title="Contacts" />        
+        <InfiniteScroller
+          loadMore={this.fetchNext}
+          className={withToggle ? 'infinite-scroller_chat-create' : 'infinite-scroller_contacts'}
+          next={next}
+        >
+          <Contacts
+            type="contactList"
+            contacts={newUsers}
+            user={user}
+            withToggle={withToggle}
+            withSearch
+          />
           {error ? <Error code={FETCH_CONTACTS_ERROR} /> : null}
         </InfiniteScroller>
       </React.Fragment>
@@ -112,12 +101,19 @@ class UserListComponent extends PureComponent {
   }
 }
 
+const userListSort = (a,b) => {
+  if (a.name > b.name) { return 1 }
+  if (a.name < b.name) { return -1 }
+  return 0;
+};
+
 const stateToProps = state => ({
   user: state.user.user,
   users: state.user.users,
   next: state.user.next,
   selectedUsers: state.user.selectedUsers,
-  current: state.search.currentUserSearch,
+  rooms: state.messages.rooms,
+  currentRoomId: state.messages.currentRoomId,
 });
 
 export const UserList = connect(stateToProps)(UserListComponent);

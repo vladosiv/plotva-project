@@ -1,33 +1,144 @@
-import { MESSAGES_SET, MESSAGES_APPENDED } from '../actions/actionTypes';
+import { MESSAGES_ACTION_TYPES } from '../actions/actionTypes';
 
-export const messagesReducer = (state = {}, action) => {
+const initialState = {
+  next: true,
+  currentChatName: '',
+  rooms: []
+}
+
+export const messagesReducer = (state = initialState, action) => {
   switch (action.type) {
-    case MESSAGES_SET:
+
+    case MESSAGES_ACTION_TYPES.MESSAGES_SET:{
       return {
         ...state,
-        [action.payload.roomId]: {
-          messages: [...action.payload.messages],
-          next: action.payload.next,
-        },
-      };
-    case MESSAGES_APPENDED:
-      if (state[action.payload.roomId] && state[action.payload.roomId].messages.length > 0) {
+        rooms: {
+          ...state.rooms,
+          [action.payload.roomId]: action.payload
+        }
+      };}
+
+    case MESSAGES_ACTION_TYPES.MESSAGES_APPENDED: {
+      const rooms = state.rooms;
+      const room = rooms[action.payload.roomId];
+
+      if (room && room.messages.length > 0) {
         return {
           ...state,
-          [action.payload.roomId]: {
-            ...state[action.payload.roomId],
-            messages: [...state[action.payload.roomId].messages, ...action.payload.messages],
-            next: action.payload.next,
-          },
+          rooms: {
+            ...rooms,
+            [action.payload.roomId]: {
+              ...room,
+              messages: [...room.messages, ...action.payload.messages],
+              next: action.payload.next
+            },
+          }
         };
       }
       return {
         ...state,
-        [action.payload.roomId]: {
-          messages: [...action.payload.messages],
-          next: null,
-        },
+        rooms: {
+          ...rooms,
+          [action.payload.roomId]: {
+            ...room,
+            messages: [...action.payload.messages],
+            next: null,
+          },
+        }
       };
+    }
+
+    case MESSAGES_ACTION_TYPES.MESSAGES_PREPENDED: {
+      const rooms = state.rooms;      
+      const room = rooms[action.payload.roomId];
+      const message = action.payload.messages[0];
+      const lastMessageUserName = action.payload.lastMessageUserName;
+      if (room && room.messages.length > 0) {
+        return {
+          ...state,
+          rooms: {
+            ...rooms,
+            [action.payload.roomId]: {
+              ...room,
+              messages: [...action.payload.messages, ...room.messages],
+              next: action.payload.next,
+              lastMessage: message.text,
+              lastMessageTime: message.time,
+              lastMessageUserName
+            },
+          }
+        };
+      }
+      return {
+        ...state,
+        rooms: {
+          ...rooms,
+          [action.payload.roomId]: {
+            ...room,
+            messages: [...action.payload.messages],
+            next: null,
+            lastMessage: message.text,
+            lastMessageTime: message.time,
+            lastMessageUserName
+          },
+        }
+      };
+    }
+
+    case MESSAGES_ACTION_TYPES.MESSAGES_ADD_USER_TO_ROOM: {
+      const {userId, roomId} = action.payload;
+      const rooms = state.rooms;
+      const room = rooms[roomId];
+      if (room) {
+        return {
+          ...state,
+          rooms: {
+            ...rooms,
+            [room.roomId]: {
+              ...room,
+              users: [...room.users, userId],
+              count: ++room.count
+            },
+          }
+        };
+      }
+      return state;
+    }
+
+    case MESSAGES_ACTION_TYPES.MESSAGES_CURRENT_USER_LEAVE_ROOM: {
+      const rooms = state.rooms;
+      Reflect.deleteProperty(rooms, action.payload);
+
+      return {
+        ...state,
+        rooms: rooms
+      };
+    }
+
+    case MESSAGES_ACTION_TYPES.MESSAGES_SET_NEXT:
+    return {
+      ...state,
+      next: action.payload
+    } 
+
+    case MESSAGES_ACTION_TYPES.MESSAGES_SET_CURRENT_ROOM:
+      return {
+        ...state,
+        currentRoomId: action.payload
+      } 
+
+      case MESSAGES_ACTION_TYPES.MESSAGES_SET_EDIT_ROOM:
+      return {
+        ...state,
+        editRoomId: action.payload
+      } 
+
+    case MESSAGES_ACTION_TYPES.MESSAGES_SET_CHAT_NAME:
+      return {
+        ...state,
+        currentChatName: action.payload,
+      };
+
     default:
       return state;
   }

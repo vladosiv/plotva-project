@@ -70,13 +70,7 @@ async function getMessages(db, filter) {
             filter[key] = ObjectId(filter[key].toString())
         }
     });
-
-    return pageableCollection(db.collection(TABLE), {
-        ...filter,
-        order: {
-            'id': -1
-        }
-    });
+    return pageableCollection(db.collection(TABLE), filter);
 }
 
 module.exports = {

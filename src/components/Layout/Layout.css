@@ -30,10 +30,12 @@ body,
 
 .layout__content {
   width: 100%;
-  padding: 0 8px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   flex: 0 1 100%;
+}
+
+.layout__content h3 {
+  margin: 0 8px;
 }
 
 .layout__content a,

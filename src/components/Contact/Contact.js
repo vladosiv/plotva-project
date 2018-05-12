@@ -5,10 +5,18 @@ import './Contact.css';
 import { Avatar } from '../Avatar/Avatar';
 import { Icon } from '../Icon/Icon';
 
+
+const formatOptions = {
+  hour: 'numeric',
+  minute: 'numeric',
+};
+
+const formatter = new Intl.DateTimeFormat('ru-RU', formatOptions)
+
 export const Contact = props => {
   const {
-    avatar,
-    userName,
+    img,
+    name,
     time,
     content,
     count,
@@ -19,21 +27,30 @@ export const Contact = props => {
     size = 'large',
     contentType = 'message',
     checked = false,
+    group,
+    lastMessageUserName,
   } = props;
 
-  let defaultName = '';
-  if (userName) {
-    userName.split(' ').forEach(word => {
-      defaultName += word[0];
-    });
+  let date;
+  let timeFormatted;
+
+  if (time) {
+    date = new Date(time);
+    timeFormatted = formatter.format(date);
   }
 
   return (
     <div onClick={onClick} className={`contact contact_${size}`}>
-      <Avatar avatar={avatar} size={size} checked={checked} defaultName={defaultName} color={color} />
+      <Avatar img={img} size={size} checked={checked} name={name} color={color} />
       <div className="contact__content">
         <div className="content__header">
-          <div className="content__name">{userName}</div>
+          <div className="content__name">
+            {group
+              ? <Icon type={'group'} />
+              : false
+            }
+            {name}
+          </div>
           {time ? (
             <div className="content__time">
               {icon ? (
@@ -43,14 +60,20 @@ export const Contact = props => {
               ) : (
                 false
               )}
-              {time}
+              {timeFormatted}
             </div>
           ) : (
             false
           )}
         </div>
         <div className="content__body">
-          {content ? <div className={`content__text content__text_${contentType}`}>{content}</div> : false}
+          {content
+            ? <div className={`content__text content__text_${contentType}`}>
+                { lastMessageUserName ? lastMessageUserName : false }
+                { content }
+              </div>
+            : false
+          }
           {count ? <div className="content__counter">{count}</div> : false}
         </div>
       </div>

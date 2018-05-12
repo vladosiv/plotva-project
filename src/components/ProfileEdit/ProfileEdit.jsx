@@ -63,6 +63,7 @@ export class ProfileEditComponent extends Component {
           onInputChange={this.onInputChange}
           value={user.name}
           label="Enter your name"
+          required
         />
         <InputGroup
           type="email"

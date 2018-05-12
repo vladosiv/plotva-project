@@ -22,7 +22,7 @@ const DATABASE_CONFIG = {
     local: MONGO_LOCAL !== 'false',
     database: MONGO_DATABASE
 };
-
+console.log(DATABASE_CONFIG)
 /**
  * Socket.io server
  */

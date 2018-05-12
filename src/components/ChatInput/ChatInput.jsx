@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import './ChatInput.css';
-import { setChatName } from '../../store/actions/chatActions';
+import { setChatName } from '../../store/actions/messagesActions';
 
 const stateToProps = state => ({});
 
@@ -21,7 +21,7 @@ export const ChatInput = connect(stateToProps)(
         <input
           className="search"
           type="search"
-          placeholder="Enter new qnique chat name."
+          placeholder="Enter new unique chat name."
           onChange={this.getNewChatName}
         />
       );

@@ -205,6 +205,17 @@ class Api {
         return this.getMessages({roomId, order: {created_at: -1}});
     }
 
+        /**
+     * Return list of messages in room
+     *
+     * @param {{}} roomId
+     *
+     * @return {Promise<Pagination<Message>>}
+     */
+    async getRoomMessagesReverse(roomId) {
+        return this.getMessages({roomId, order: {created_at: 1}});
+    }
+
     /**
      * Invoke callback, when someone change his status
      *

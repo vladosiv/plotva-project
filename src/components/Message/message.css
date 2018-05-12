@@ -8,12 +8,28 @@
   padding: 0 6px 6px 56px;
 }
 
+.message-wrapper_chat {
+  padding: 0 56px 0 0;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.message-wrapper_chat .avatar {
+  position: absolute;
+  bottom: 0;
+}
+
+.message-wrapper_chat .message {
+  margin-left: 50px;
+  padding: 6px 45px 5px 8px;
+}
+
 .message {
   position: relative;
   display: inline-block;
   box-sizing: border-box;
   min-width: 100px;
-  padding: 6px 12px 18px;
+  padding: 6px 45px 18px 18px;
   text-align: left;
   letter-spacing: -0.45px;
   color: #000;
@@ -23,6 +39,7 @@
   background-color: #fff;
   font-size: 17px;
   line-height: 22px;
+  word-wrap: break-word;
 }
 
 .message_my {
@@ -51,11 +68,11 @@
 }
 
 .message_my .message__time {
-  right: 20px;
   color: #19c700;
 }
 
 .message .icon {
-  position: relative;
-  right: -3px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
 }

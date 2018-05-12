@@ -1,37 +1,34 @@
 import React, { PureComponent } from 'react';
-import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
 import { MessagesList } from '../MessagesList/MessagesList';
 import { fetchMessages } from '../../store/actions/messagesActions';
-import { fetchChat, clearChat } from '../../store/actions/chatActions';
+import { getCurrentChatUsers } from '../../store/actions/userActions';
 import { Error } from '../Error/Error';
-import { NoResults } from '../NoResults/NoResults';
+import { Loader } from '../Loader/Loader';
 import { FETCH_MESSAGES_ERROR } from '../../errorCodes';
-import api from '../../api';
 
 class ChatComponent extends PureComponent {
   constructor() {
     super();
     this.state = {
       error: null,
+      fethingUsers: false
     };
     this.fetchNext = this.fetchNext.bind(this);
   }
 
   componentDidMount() {
-    this.joinRoom();
-    this.fetchNext();
-    this.props.fetchChat(this.props.match.params.id);
+    this.getChatUsers();
   }
 
-  componentWillUnmount() {
-    this.props.clearChat();
+  componentDidUpdate(){
+    this.getChatUsers();    
   }
 
-  async joinRoom() {
+  async fetchNext() {
     try {
-      await api.currentUserJoinRoom(this.props.match.params.id);
+      await this.props.dispatch(fetchMessages(this.props.currentRoomId));
     } catch (error) {
       this.setState({
         error,
@@ -39,28 +36,34 @@ class ChatComponent extends PureComponent {
     }
   }
 
-  async fetchNext() {
-    try {
-      await this.props.fetchMessages(this.props.match.params.id);
-    } catch (error) {
-      this.setState({
-        error,
-      });
+  async getChatUsers() {
+    if (!this.state.fethingUsers) {
+      await getCurrentChatUsers();
+      this.setState({fethingUsers: false});               
     }
   }
 
   render() {
     const { error } = this.state;
-    const { messages, match } = this.props;
+    if (error) {
+      return <Error code={FETCH_MESSAGES_ERROR} />
+    };
 
-    if (!messages[match.params.id] && !error) {
-      return <NoResults text="No messages here yet..." />;
+    const { rooms, currentRoomId, users, user } = this.props;
+    const room = rooms && rooms[currentRoomId];
+    if (!room) {
+      this.fetchNext();
+      return <Loader />;
+    }
+
+    let chatUsers = [];
+    if (users) {
+      chatUsers = [user, ...users].filter(user => room.users.includes(user._id));
     }
 
     return (
-      <InfiniteScroller loadMore={this.fetchNext}>
-        {messages[match.params.id] ? <MessagesList messages={messages[match.params.id].messages} /> : null}
-        {error ? <Error code={FETCH_MESSAGES_ERROR} /> : null}
+      <InfiniteScroller loadMore={this.fetchNext} next={room.next} reverse>
+        <MessagesList messages={room.messages} chatUsers={chatUsers} isChat={room.isChat}/>
       </InfiniteScroller>
     );
   }
@@ -68,7 +71,9 @@ class ChatComponent extends PureComponent {
 
 const stateToProps = state => ({
   user: state.user.user,
-  messages: state.messages,
+  users: state.user.users,
+  rooms: state.messages.rooms,
+  currentRoomId: state.messages.currentRoomId
 });
 
-export const Chat = withRouter(connect(stateToProps, { fetchMessages, fetchChat, clearChat })(ChatComponent));
+export const Chat = connect(stateToProps)(ChatComponent);

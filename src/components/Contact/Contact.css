@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   position: relative;
-  padding: 7px 10px 7px 0;
+  padding: 7px 8px 7px 8px;
 }
 
 .contact__content {
@@ -52,6 +52,7 @@
 .content__text {
   display: inline-block;
   overflow: hidden;
+  text-overflow: ellipsis;
   color: #8e8e93;
   font-size: 15px;
 }
@@ -77,6 +78,7 @@
 
 .content__text_message {
   max-height: 32px;
+  max-width: 80%;
 }
 
 .content__text_online {
@@ -89,4 +91,22 @@
 
 .contact_small .content__text {
   font-size: 13px;
+}
+
+.example-enter {
+  opacity: 0.01;
+}
+
+.example-enter.example-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.example-leave {
+  opacity: 1;
+}
+
+.example-leave.example-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
 }

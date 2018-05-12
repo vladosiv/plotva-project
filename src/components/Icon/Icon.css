@@ -62,3 +62,19 @@
   height: 18px;
   background-image: url(./img/attachment.svg);
 }
+
+.icon_group {
+  width: 18px;
+  height: 14px;
+  margin-right: 5px;
+  background-image: url(./img/user-friends.svg);
+}
+
+.icon_sign-out {
+  position: absolute;
+  right: -35px;
+  width: 20px;
+  height: 24px;
+  margin-left: 5px;
+  background-image: url(./img/exit.svg);
+}

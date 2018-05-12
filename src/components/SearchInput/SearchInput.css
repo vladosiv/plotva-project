@@ -2,9 +2,9 @@
   border: none;
   height: 28px;
   border-radius: 6px;
-  padding: 0 10px 0 31px;
   font-size: 14px;
   width: 100%;
+  margin-bottom: 8px;
   background: #ededed url(images/search.svg) no-repeat 10px center / 14px;
 }
 
@@ -24,6 +24,5 @@
 }
 
 .layout__content .search {
-  margin: 7px 0;
   text-align: center;
 }

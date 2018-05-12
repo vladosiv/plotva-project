@@ -1,38 +1,28 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { Contacts } from '../Contacts/Contacts';
 import { InfiniteScroller } from '../InfiniteScroller/InfiniteScroller';
-import { NoResults } from '../NoResults/NoResults';
+import { Loader } from '../Loader/Loader';
 import { Error } from '../Error/Error';
 import { FETCH_ROOMS_ERROR } from '../../errorCodes';
 import api from '../../api';
+import { connect } from 'react-redux';
+import { fetchMessages, setNext } from '../../store/actions/messagesActions';
 
-export class ChatsPage extends PureComponent {
+class ChatsPageComponent extends Component {
   constructor() {
     super();
-    this.state = {
-      rooms: [],
-      next: null,
-      error: null,
-    };
     this.fetchNext = this.fetchNext.bind(this);
   }
 
   componentDidMount() {
-    this.fetchNext(true);
+    this.fetchNext();
   }
 
-  async fetchNext(next = this.state.next) {
+  async fetchNext(next = this.props.next) {   
     try {
       if (next) {
-        const response = await this.fetchRooms(next);
-        this.setState(prevState => {
-          return {
-            rooms: [...prevState.rooms, ...response.rooms],
-            next: response.next,
-          };
-        });
-        return response;
-      }
+        await this.fetchRooms(next);     
+      }   
     } catch (error) {
       this.setState({
         error,
@@ -40,37 +30,57 @@ export class ChatsPage extends PureComponent {
     }
   }
 
-  async fetchRooms(next) {
+  async fetchRooms(next) {  
     const res = await api.getCurrentUserRooms(next);
-    const rooms = await Promise.all(
+    await this.props.dispatch(setNext(res.next));    
+    await Promise.all(
       res.items.map(async room => {
-        const messages = await api.getRoomMessages(room._id);
-        let chatUser = await api.getUser(room.users[1]);
-        let chatName = room.users.length > 2 ? (room.name || 'Group chat') : chatUser.name;
-        return {
-          _id: room._id,
-          userName: chatName,
-          content: (messages.items[0] && messages.items[0].message) || 'No messages',
-        };
+        await this.props.dispatch(fetchMessages(room._id));    
+        await api.currentUserJoinRoom(room._id);
       }),
     );
-    return {
-      rooms,
-      next: res.next,
-    };
+    return res;
   }
 
   render() {
-    const { rooms, error } = this.state;
-    if (!rooms.length && !error) {
-      return <NoResults text="No chats here yet..." />;
+    const { rooms, error, next } = this.props;
+
+    if (!Object.keys(rooms).length && !error) {
+      return <Loader />;
     }
 
+    const chats = getChats(rooms).sort(chatListSort);
+
     return (
-      <InfiniteScroller hasMore={!!this.next} loadMore={this.fetchNext}>
-        <Contacts contacts={rooms} search="" />
+      <InfiniteScroller next={next} loadMore={this.fetchNext}>
+        <Contacts contacts={chats} search="" />
         {error ? <Error code={FETCH_ROOMS_ERROR} /> : null}
       </InfiniteScroller>
     );
   }
 }
+
+const getChats = rooms => Object.keys(rooms).map(key => ({
+  _id: rooms[key].roomId,
+  name: rooms[key].name,
+  content: rooms[key].lastMessage,
+  userCount: rooms[key].count,
+  time: rooms[key].lastMessageTime,
+  group: rooms[key].isChat,
+  lastMessageUserName: rooms[key].lastMessageUserName,
+}));
+
+const chatListSort = (a, b) => {
+  if (a.time < b.time) { return 1 }
+  if (a.time > b.time) { return -1 }
+  return 0;
+}
+
+const stateToProps = state => ({
+  rooms: state.messages.rooms,
+  next: state.messages.next,
+  users: state.user.users,
+  user: state.user.user
+});
+
+export const ChatsPage = connect(stateToProps)(ChatsPageComponent);

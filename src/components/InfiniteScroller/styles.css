@@ -6,3 +6,21 @@
   border-radius: 10px;
   background-color: #f8f8f8;
 }
+
+.infinite-scroller {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+.infinite-scroller_contacts {
+  height: calc(100% - 145px);
+}
+
+.infinite-scroller_chat-create {
+  height: calc(100% - 70px);
+}
+
+.infinite-scroller_chat-members {
+  height: calc(100% - 28px);
+}

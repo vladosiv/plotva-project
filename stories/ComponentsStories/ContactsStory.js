@@ -8,7 +8,7 @@ export default storiesOf('Contacts', module).add('Contacts list', () => (
     <Contacts
       contacts={[
         {
-          userName: 'Aaron A Aaronson',
+          name: 'Aaron A Aaronson',
           content: 'Some message',
           contentType: 'message',
           time: '9:30',
@@ -18,13 +18,13 @@ export default storiesOf('Contacts', module).add('Contacts list', () => (
           icon: 'message-read',
         },
         {
-          userName: 'Aaron A Aaronson',
+          name: 'Aaron A Aaronson',
           content: 'online',
           contentType: 'online',
           size: 'medium',
         },
         {
-          userName: 'Aaron A Aaronson',
+          name: 'Aaron A Aaronson',
           content: 'Some message',
           contentType: 'message',
           size: 'medium',
