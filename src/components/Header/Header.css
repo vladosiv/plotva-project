@@ -1,0 +1,42 @@
+.header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.header_sm {
+  height: 43px;
+}
+
+.header_lg {
+  height: 49px;
+}
+
+.header__left,
+.header__right {
+  flex: 0 0 72px;
+}
+
+.header__left {
+  display: flex;
+  align-items: center;
+}
+
+.header__right {
+  padding-left: 7px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.header__center {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  max-width: calc(100% - 160px);
+  text-align: center;
+  position: relative;
+}
+
